@@ -844,5 +844,6 @@ Smoking damages blood vessels and increases cardiovascular risk.
 *Normal:* Never
 """)
 
-st.divider()
+st.markdown("---")
+
 st.caption("Built with ❤️ using Streamlit & XGBoost | Data Vidwan")
