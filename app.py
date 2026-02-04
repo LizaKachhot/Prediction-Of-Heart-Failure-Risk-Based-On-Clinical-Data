@@ -717,7 +717,6 @@ with tab2:
 # TAB 3 — INPUT SUMMARY
 # =====================================================
 
-
 with tab3:
     st.subheader("📋 Patient Input Summary")
 
@@ -742,7 +741,7 @@ with tab3:
 {html_rows}
     </tbody>
 </table>
-"""
+""".strip()   # 🔑 THIS LINE FIXES THE ISSUE
 
     st.markdown(html_table, unsafe_allow_html=True)
 
