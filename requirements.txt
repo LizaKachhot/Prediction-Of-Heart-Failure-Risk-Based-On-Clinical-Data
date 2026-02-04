@@ -7,3 +7,4 @@ streamlit
 matplotlib
 plotly
 fpdf
+altair<5
