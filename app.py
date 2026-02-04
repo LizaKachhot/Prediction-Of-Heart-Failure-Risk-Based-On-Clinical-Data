@@ -43,12 +43,8 @@ if os.path.exists(logo_path):
         '<div class="sidebar-logo">',
         unsafe_allow_html=True
     )
-    st.sidebar.image(Image.open(logo_path), width=150)
+    st.sidebar.image(Image.open(logo_path), width=140)
     st.sidebar.markdown("</div>", unsafe_allow_html=True)
-
-st.sidebar.markdown("---")
-
-
 
 # =====================================================
 # LOAD MODEL
