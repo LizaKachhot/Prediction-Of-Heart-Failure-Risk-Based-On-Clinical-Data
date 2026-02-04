@@ -624,14 +624,6 @@ def generate_pdf(prob, risk_label, raw_inputs, explanations, recommendations):
     return file_name
 
 
-   
-summary_df = pd.DataFrame(
-    [(k, str(v)) for k, v in raw_input_summary.items()],
-    columns=["Feature", "Entered Value"]
-)
-
-
-
 # =====================================================
 # TABS
 # =====================================================
@@ -725,33 +717,35 @@ with tab2:
 # TAB 3 — INPUT SUMMARY
 # =====================================================
 
+
 with tab3:
     st.subheader("📋 Patient Input Summary")
 
     html_rows = ""
     for key, value in raw_input_summary.items():
         html_rows += f"""
-        <tr>
-            <td style="padding:8px; border:1px solid #ddd;"><b>{key}</b></td>
-            <td style="padding:8px; border:1px solid #ddd;">{value}</td>
-        </tr>
-        """
+<tr>
+    <td style="padding:10px; border:1px solid #ddd; font-weight:600;">{key}</td>
+    <td style="padding:10px; border:1px solid #ddd;">{value}</td>
+</tr>
+"""
 
     html_table = f"""
-    <table style="border-collapse:collapse; width:100%;">
-        <thead>
-            <tr style="background-color:#f2f2f2;">
-                <th style="padding:8px; border:1px solid #ddd;">Feature</th>
-                <th style="padding:8px; border:1px solid #ddd;">Entered Value</th>
-            </tr>
-        </thead>
-        <tbody>
-            {html_rows}
-        </tbody>
-    </table>
-    """
+<table style="border-collapse:collapse; width:100%; margin-top:10px;">
+    <thead>
+        <tr style="background-color:#f5f5f5;">
+            <th style="padding:10px; border:1px solid #ddd; text-align:left;">Feature</th>
+            <th style="padding:10px; border:1px solid #ddd; text-align:left;">Entered Value</th>
+        </tr>
+    </thead>
+    <tbody>
+{html_rows}
+    </tbody>
+</table>
+"""
 
     st.markdown(html_table, unsafe_allow_html=True)
+
 
 
 # =====================================================
