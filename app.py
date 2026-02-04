@@ -17,7 +17,15 @@ st.set_page_config(
 )
 
 # =====================================================
-# HEADER WITH WEBSITE NAME + LOGO (CLEAN MEDICAL STYLE)
+# LOAD MODEL
+# =====================================================
+artifacts = joblib.load("heart_failure_xgboost_project.pkl")
+model = artifacts["model"]
+scaler = artifacts["scaler"]
+feature_columns = artifacts["features"]
+
+# =====================================================
+# HEADER WITH WEBSITE NAME + LOGO
 # =====================================================
 def load_logo(path):
     with open(path, "rb") as f:
@@ -30,32 +38,31 @@ col1, col2 = st.columns([7, 2])
 with col1:
     st.markdown(
         """
-        <div style="
-            font-size:42px;
-            font-weight:700;
-            color:#ff4b4b;
-            margin-bottom:10px;
-        ">
-            HeartWell AI
+        <div style="line-height:1.2;">
+            <h1 style="margin-bottom:0; color:#2c2c2c; font-weight:800;">
+                HeartWell <span style="color:#ff4b4b;">AI</span>
+            </h1>
+            <p style="margin-top:2px; color:#888; font-size:14px;">
+                AI-powered heart health intelligence
+            </p>
+            <h2 style="margin-top:14px; color:#ff4b4b;">
+                ❤️ AI Based Heart Failure Risk Prediction System
+            </h2>
+            <p style="margin-top:6px;">
+                Smarter Insights for a Healthier Heart
+            </p>
+            <p style="color:#555;">
+                Predict • Understand • Prevent
+            </p>
         </div>
         """,
         unsafe_allow_html=True
     )
 
-    st.markdown(
-        "<h2 style='color:#ff4b4b'>❤️ AI Based Heart Failure Risk Prediction System</h2>"
-        "<p>Smarter Insights for a Healthier Heart</p>"
-        "<p>Predict • Understand • Prevent</p>",
-        unsafe_allow_html=True
-    )
-
-
 with col2:
     st.image(f"data:image/png;base64,{logo_base64}", width=220)
 
 st.markdown("---")
-
-
 
 
 # =====================================================
