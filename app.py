@@ -1,6 +1,4 @@
 import streamlit as st
-# Disable Arrow to avoid LargeUtf8 crash
-st.set_option("dataFrameSerialization", "legacy")
 import pandas as pd
 import joblib
 import plotly.graph_objects as go
@@ -727,10 +725,13 @@ with tab2:
 # TAB 3 — INPUT SUMMARY
 # =====================================================
 
+
 with tab3:
     st.subheader("📋 Patient Input Summary")
-    st.table(summary_df)
 
+    # Convert DataFrame to plain Python to avoid Arrow (LargeUtf8) crash
+    summary_records = summary_df.astype(str).to_dict(orient="records")
+    st.table(summary_records)
 
 
 # =====================================================
