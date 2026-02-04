@@ -1,4 +1,6 @@
 import streamlit as st
+# Disable Arrow to avoid LargeUtf8 crash
+st.set_option("dataFrameSerialization", "legacy")
 import pandas as pd
 import joblib
 import plotly.graph_objects as go
@@ -6,12 +8,6 @@ from fpdf import FPDF
 from datetime import datetime
 import base64
 import numpy as np
-
-def fix_arrow_compatibility(df):
-    for col in df.columns:
-        if df[col].dtype.name.startswith("string"):
-            df[col] = df[col].astype("object")
-    return df
 
 # =====================================================
 # PAGE CONFIG
@@ -635,10 +631,6 @@ summary_df = pd.DataFrame(
     [(k, str(v)) for k, v in raw_input_summary.items()],
     columns=["Feature", "Entered Value"]
 )
-
-summary_df = fix_arrow_compatibility(summary_df)
-
-
 
 
 
