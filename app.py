@@ -721,36 +721,36 @@ with tab2:
 
 
 # =====================================================
-# TAB 3 — INPUT SUMMARY
+# TAB 3 — INPUT SUMMARY (FINAL FIX)
 # =====================================================
-
 with tab3:
     st.subheader("📋 Patient Input Summary")
 
     html_rows = ""
     for key, value in raw_input_summary.items():
-        html_rows += f"""
-<tr>
-    <td style="padding:10px; border:1px solid #ddd; font-weight:600;">{key}</td>
-    <td style="padding:10px; border:1px solid #ddd;">{value}</td>
-</tr>
-"""
+        html_rows += (
+            "<tr>"
+            f"<td style='padding:10px; border:1px solid #ddd; font-weight:600;'>{key}</td>"
+            f"<td style='padding:10px; border:1px solid #ddd;'>{value}</td>"
+            "</tr>"
+        )
 
-    html_table = f"""
-<table style="border-collapse:collapse; width:100%; margin-top:10px;">
-    <thead>
-        <tr style="background-color:#f5f5f5;">
-            <th style="padding:10px; border:1px solid #ddd; text-align:left;">Feature</th>
-            <th style="padding:10px; border:1px solid #ddd; text-align:left;">Entered Value</th>
-        </tr>
-    </thead>
-    <tbody>
-{html_rows}
-    </tbody>
-</table>
-""".strip()   # 🔑 THIS LINE FIXES THE ISSUE
+    html_table = (
+        "<table style='border-collapse:collapse; width:100%; margin-top:10px;'>"
+        "<thead>"
+        "<tr style='background-color:#f5f5f5;'>"
+        "<th style='padding:10px; border:1px solid #ddd; text-align:left;'>Feature</th>"
+        "<th style='padding:10px; border:1px solid #ddd; text-align:left;'>Entered Value</th>"
+        "</tr>"
+        "</thead>"
+        "<tbody>"
+        f"{html_rows}"
+        "</tbody>"
+        "</table>"
+    )
 
     st.markdown(html_table, unsafe_allow_html=True)
+
 
 
 
