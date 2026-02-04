@@ -9,42 +9,32 @@ import numpy as np
 import base64
 import os
 
-def get_base64_image(path):
-    with open(path, "rb") as f:
-        return base64.b64encode(f.read()).decode()
+st.markdown(
+    """
+    <style>
+        /* Remove default sidebar padding */
+        section[data-testid="stSidebar"] > div {
+            padding-top: 0.25rem;
+        }
+
+        /* Tighten first element spacing */
+        section[data-testid="stSidebar"] img {
+            margin-top: 0;
+        }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
+from PIL import Image
+import os
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 logo_path = os.path.join(BASE_DIR, "heartwell_logo.png")
-logo_base64 = get_base64_image(logo_path)
 
-st.markdown(
-    f"""
-    <style>
-        /* Absolute logo pinned to top-left */
-        .heartwell-logo {{
-            position: fixed;
-            top: 12px;
-            left: 12px;
-            z-index: 1000;
-        }}
-
-        .heartwell-logo img {{
-            width: 55px;      /* SMALL & CLEAR */
-            height: auto;
-            opacity: 0.95;
-        }}
-
-        /* Push sidebar content down so it doesn't overlap */
-        section[data-testid="stSidebar"] {{
-            padding-top: 70px;
-        }}
-    </style>
-
-    <div class="heartwell-logo">
-        <img src="data:image/png;base64,{logo_base64}">
-    </div>
-    """,
-    unsafe_allow_html=True
+st.sidebar.image(
+    Image.open(logo_path),
+    width=90  # small, clear, logo-like
 )
 
 
