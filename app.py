@@ -10,18 +10,9 @@ import numpy as np
 # =====================================================
 # PAGE CONFIG
 # =====================================================
-st.set_page_config(
-    page_title="AI Based Heart Failure Risk Prediction",
-    page_icon="❤️",
-    layout="wide"
-)
-
-# =====================================================
-# SIDEBAR LOGO (TOP LEFT)
-# =====================================================
 st.sidebar.image(
-    "heartwell_logo.png",  # your Heartwell logo file
-    use_container_width=True
+    "heartwell_logo.png",
+    width=170
 )
 
 st.sidebar.markdown("---")
