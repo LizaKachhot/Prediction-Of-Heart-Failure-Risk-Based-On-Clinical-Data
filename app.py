@@ -10,12 +10,17 @@ import numpy as np
 # =====================================================
 # PAGE CONFIG
 # =====================================================
-st.sidebar.image(
-    "heartwell_logo.png",
-    width=170
-)
+import os
+from PIL import Image
 
-st.sidebar.markdown("---")
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+LOGO_PATH = os.path.join(BASE_DIR, "heartwell_logo.png")
+
+if os.path.exists(LOGO_PATH):
+    st.sidebar.image(Image.open(LOGO_PATH), width=170)
+else:
+    st.sidebar.error("❌ Sidebar logo not found")
+
 
 # =====================================================
 # LOAD MODEL
