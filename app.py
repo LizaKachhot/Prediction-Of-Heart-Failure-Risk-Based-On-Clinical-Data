@@ -44,7 +44,8 @@ with col1:
 with col2:
     st.image(f"data:image/png;base64,{logo_base64}", width=240)
 
-st.divider()
+st.markdown("---")
+
 
 # =====================================================
 # SIDEBAR INPUTS
