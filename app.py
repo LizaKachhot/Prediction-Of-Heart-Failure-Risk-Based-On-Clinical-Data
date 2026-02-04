@@ -7,6 +7,12 @@ from datetime import datetime
 import base64
 import numpy as np
 
+def fix_arrow_compatibility(df):
+    for col in df.columns:
+        if df[col].dtype.name.startswith("string"):
+            df[col] = df[col].astype("object")
+    return df
+
 # =====================================================
 # PAGE CONFIG
 # =====================================================
