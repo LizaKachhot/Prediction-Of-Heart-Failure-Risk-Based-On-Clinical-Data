@@ -9,35 +9,6 @@ import numpy as np
 import base64
 import os
 
-st.markdown(
-    """
-    <style>
-        /* Remove default sidebar padding */
-        section[data-testid="stSidebar"] > div {
-            padding-top: 0.25rem;
-        }
-
-        /* Tighten first element spacing */
-        section[data-testid="stSidebar"] img {
-            margin-top: 0;
-        }
-    </style>
-    """,
-    unsafe_allow_html=True
-)
-
-from PIL import Image
-import os
-
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-logo_path = os.path.join(BASE_DIR, "heartwell_logo.png")
-
-st.sidebar.image(
-    Image.open(logo_path),
-    width=90  # small, clear, logo-like
-)
-
-
 # =====================================================
 # LOAD MODEL
 # =====================================================
