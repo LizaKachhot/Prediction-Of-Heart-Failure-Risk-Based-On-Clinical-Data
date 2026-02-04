@@ -35,6 +35,15 @@ st.set_page_config(
     page_icon="❤️",
     layout="wide"
 )
+from PIL import Image
+import os
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+logo_path = os.path.join(BASE_DIR, "heartwell_logo.png")
+
+st.sidebar.image(
+    Image.open(logo_path),
+    width=90  # small, clear, logo-like
 
 # =====================================================
 # LOAD MODEL
@@ -66,15 +75,7 @@ with col2:
 
 st.markdown("---")
 
-from PIL import Image
-import os
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-logo_path = os.path.join(BASE_DIR, "heartwell_logo.png")
-
-st.sidebar.image(
-    Image.open(logo_path),
-    width=90  # small, clear, logo-like
 )
 
 # =====================================================
