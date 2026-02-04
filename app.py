@@ -636,6 +636,9 @@ summary_df = pd.DataFrame(
     columns=["Feature", "Entered Value"]
 )
 
+summary_df = fix_arrow_compatibility(summary_df)
+
+
 
 
 
