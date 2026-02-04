@@ -725,13 +725,33 @@ with tab2:
 # TAB 3 — INPUT SUMMARY
 # =====================================================
 
-
 with tab3:
     st.subheader("📋 Patient Input Summary")
 
-    # Convert DataFrame to plain Python to avoid Arrow (LargeUtf8) crash
-    summary_records = summary_df.astype(str).to_dict(orient="records")
-    st.table(summary_records)
+    html_rows = ""
+    for key, value in raw_input_summary.items():
+        html_rows += f"""
+        <tr>
+            <td style="padding:8px; border:1px solid #ddd;"><b>{key}</b></td>
+            <td style="padding:8px; border:1px solid #ddd;">{value}</td>
+        </tr>
+        """
+
+    html_table = f"""
+    <table style="border-collapse:collapse; width:100%;">
+        <thead>
+            <tr style="background-color:#f2f2f2;">
+                <th style="padding:8px; border:1px solid #ddd;">Feature</th>
+                <th style="padding:8px; border:1px solid #ddd;">Entered Value</th>
+            </tr>
+        </thead>
+        <tbody>
+            {html_rows}
+        </tbody>
+    </table>
+    """
+
+    st.markdown(html_table, unsafe_allow_html=True)
 
 
 # =====================================================
