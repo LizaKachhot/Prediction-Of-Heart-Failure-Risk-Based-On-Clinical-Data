@@ -6,45 +6,47 @@ from fpdf import FPDF
 from datetime import datetime
 import base64
 import numpy as np
+import base64
+import os
+
+def get_base64_image(path):
+    with open(path, "rb") as f:
+        return base64.b64encode(f.read()).decode()
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+logo_path = os.path.join(BASE_DIR, "heartwell_logo.png")
+logo_base64 = get_base64_image(logo_path)
 
 st.markdown(
-    """
+    f"""
     <style>
-        /* Remove default top padding in sidebar */
-        section[data-testid="stSidebar"] > div {
-            padding-top: 0rem;
-        }
+        /* Absolute logo pinned to top-left */
+        .heartwell-logo {{
+            position: fixed;
+            top: 12px;
+            left: 12px;
+            z-index: 1000;
+        }}
 
-        /* Center logo container */
-        .sidebar-logo {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-top: 10px;
-            margin-bottom: 20px;
-        }
+        .heartwell-logo img {{
+            width: 55px;      /* SMALL & CLEAR */
+            height: auto;
+            opacity: 0.95;
+        }}
+
+        /* Push sidebar content down so it doesn't overlap */
+        section[data-testid="stSidebar"] {{
+            padding-top: 70px;
+        }}
     </style>
+
+    <div class="heartwell-logo">
+        <img src="data:image/png;base64,{logo_base64}">
+    </div>
     """,
     unsafe_allow_html=True
 )
 
-
-# =====================================================
-# PAGE CONFIG
-# =====================================================
-from PIL import Image
-import os
-
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-logo_path = os.path.join(BASE_DIR, "heartwell_logo.png")
-
-if os.path.exists(logo_path):
-    st.sidebar.markdown(
-        '<div class="sidebar-logo">',
-        unsafe_allow_html=True
-    )
-    st.sidebar.image(Image.open(logo_path), width=140)
-    st.sidebar.markdown("</div>", unsafe_allow_html=True)
 
 # =====================================================
 # LOAD MODEL
