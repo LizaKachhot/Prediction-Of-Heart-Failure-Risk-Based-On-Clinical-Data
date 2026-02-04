@@ -639,8 +639,15 @@ tab1, tab2, tab3, tab4 = st.tabs([
 # =====================================================
 with tab1:
     if st.button("🚀 Predict Heart Failure Risk"):
-        prob = model.predict_proba(input_data)[0][1] * 100
-        pred = model.predict(input_data)[0]
+        prob = model.predict_proba(
+            input_data,
+            validate_features=False
+        )[0][1] * 100
+
+        pred = model.predict(
+            input_data,
+            validate_features=False
+        )[0]
 
         st.subheader("🎯 Risk Assessment")
         st.progress(int(prob))
