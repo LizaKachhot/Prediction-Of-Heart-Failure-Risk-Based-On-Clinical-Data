@@ -17,15 +17,7 @@ st.set_page_config(
 )
 
 # =====================================================
-# LOAD MODEL
-# =====================================================
-artifacts = joblib.load("heart_failure_xgboost_project.pkl")
-model = artifacts["model"]
-scaler = artifacts["scaler"]
-feature_columns = artifacts["features"]
-
-# =====================================================
-# HEADER WITH WEBSITE NAME + LOGO (ELEGANT)
+# HEADER WITH WEBSITE NAME + LOGO (CLEAN MEDICAL STYLE)
 # =====================================================
 def load_logo(path):
     with open(path, "rb") as f:
@@ -38,18 +30,18 @@ col1, col2 = st.columns([7, 2])
 with col1:
     st.markdown(
         """
-        <div style="margin-bottom:10px;">
+        <div style="margin-bottom:6px;">
             <span style="
-                font-size:26px;
-                font-weight:700;
-                letter-spacing:0.5px;
-                color:#2b2b2b;
+                font-size:24px;
+                font-weight:600;
+                color:#3a4a5a;
+                letter-spacing:0.3px;
             ">
-                HeartWell <span style="color:#ff4b4b;">AI</span>
+                HeartWell <span style="color:#6b7c93;">AI</span>
             </span>
         </div>
 
-        <h2 style="color:#ff4b4b; margin-top:8px;">
+        <h2 style="color:#ff4b4b; margin-top:10px;">
             ❤️ AI Based Heart Failure Risk Prediction System
         </h2>
         <p>Smarter Insights for a Healthier Heart</p>
@@ -62,6 +54,7 @@ with col2:
     st.image(f"data:image/png;base64,{logo_base64}", width=220)
 
 st.markdown("---")
+
 
 
 
