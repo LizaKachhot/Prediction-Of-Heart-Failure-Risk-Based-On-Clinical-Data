@@ -7,19 +7,47 @@ from datetime import datetime
 import base64
 import numpy as np
 
+st.markdown(
+    """
+    <style>
+        /* Remove default top padding in sidebar */
+        section[data-testid="stSidebar"] > div {
+            padding-top: 0rem;
+        }
+
+        /* Center logo container */
+        .sidebar-logo {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 10px;
+            margin-bottom: 20px;
+        }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
+
 # =====================================================
 # PAGE CONFIG
 # =====================================================
-import os
 from PIL import Image
+import os
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-LOGO_PATH = os.path.join(BASE_DIR, "heartwell_logo.png")
+logo_path = os.path.join(BASE_DIR, "heartwell_logo.png")
 
-if os.path.exists(LOGO_PATH):
-    st.sidebar.image(Image.open(LOGO_PATH), width=170)
-else:
-    st.sidebar.error("❌ Sidebar logo not found")
+if os.path.exists(logo_path):
+    st.sidebar.markdown(
+        '<div class="sidebar-logo">',
+        unsafe_allow_html=True
+    )
+    st.sidebar.image(Image.open(logo_path), width=220)
+    st.sidebar.markdown("</div>", unsafe_allow_html=True)
+
+st.sidebar.markdown("---")
+
 
 
 # =====================================================
