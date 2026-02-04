@@ -10,6 +10,15 @@ import base64
 import os
 
 # =====================================================
+# PAGE CONFIG
+# =====================================================
+st.set_page_config(
+    page_title="AI Based Heart Failure Risk Prediction",
+    page_icon="❤️",
+    layout="wide"
+)
+
+# =====================================================
 # LOAD MODEL
 # =====================================================
 artifacts = joblib.load("heart_failure_xgboost_project.pkl")
