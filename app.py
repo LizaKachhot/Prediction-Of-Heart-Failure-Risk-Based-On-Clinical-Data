@@ -44,7 +44,7 @@ logo_path = os.path.join(BASE_DIR, "heartwell_logo.png")
 st.sidebar.image(
     Image.open(logo_path),
     width=90  # small, clear, logo-like
-
+)
 # =====================================================
 # LOAD MODEL
 # =====================================================
@@ -74,9 +74,6 @@ with col2:
     st.image(f"data:image/png;base64,{logo_base64}", width=240)
 
 st.markdown("---")
-
-
-)
 
 # =====================================================
 # SIDEBAR INPUTS
