@@ -30,25 +30,25 @@ col1, col2 = st.columns([7, 2])
 with col1:
     st.markdown(
         """
-        <div style="margin-bottom:6px;">
-            <span style="
-                font-size:24px;
-                font-weight:600;
-                color:#3a4a5a;
-                letter-spacing:0.3px;
-            ">
-                HeartWell <span style="color:#6b7c93;">AI</span>
-            </span>
+        <div style="
+            font-size:42px;
+            font-weight:700;
+            color:#ff4b4b;
+            margin-bottom:10px;
+        ">
+            HeartWell AI
         </div>
-
-        <h2 style="color:#ff4b4b; margin-top:10px;">
-            ❤️ AI Based Heart Failure Risk Prediction System
-        </h2>
-        <p>Smarter Insights for a Healthier Heart</p>
-        <p>Predict • Understand • Prevent</p>
         """,
         unsafe_allow_html=True
     )
+
+    st.markdown(
+        "<h2 style='color:#ff4b4b'>❤️ AI Based Heart Failure Risk Prediction System</h2>"
+        "<p>Smarter Insights for a Healthier Heart</p>"
+        "<p>Predict • Understand • Prevent</p>",
+        unsafe_allow_html=True
+    )
+
 
 with col2:
     st.image(f"data:image/png;base64,{logo_base64}", width=220)
