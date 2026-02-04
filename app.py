@@ -17,6 +17,16 @@ st.set_page_config(
 )
 
 # =====================================================
+# SIDEBAR LOGO (TOP LEFT)
+# =====================================================
+st.sidebar.image(
+    "heartwell_logo.png",  # your Heartwell logo file
+    use_container_width=True
+)
+
+st.sidebar.markdown("---")
+
+# =====================================================
 # LOAD MODEL
 # =====================================================
 artifacts = joblib.load("heart_failure_xgboost_project.pkl")
