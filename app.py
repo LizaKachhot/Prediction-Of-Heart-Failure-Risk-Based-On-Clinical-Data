@@ -33,20 +33,41 @@ def load_logo(path):
     with open(path, "rb") as f:
         return base64.b64encode(f.read()).decode()
 
-logo_base64 = load_logo("data_vidwan_logo.jpeg")
+heartwell_logo_base64 = load_logo("heartwell_logo.png")
+data_vidwan_logo_base64 = load_logo("data_vidwan_logo.jpeg")
+
+
+# =====================================================
+# HEADER WITH HEARTWELL + DATA VIDWAN LOGOS
+# =====================================================
 
 col1, col2 = st.columns([7, 2])
+
 with col1:
     st.markdown(
-        "<h2 style='color:#ff4b4b'>❤️ AI Based Heart Failure Risk Prediction System</h2>"
-        "<p>Smarter Insights for a Healthier Heart</p>"
-         "<p>Predict • Understand • Prevent</p>",
+        f"""
+<div style="display:flex; flex-direction:column; align-items:flex-start;">
+
+<img src="data:image/png;base64,{heartwell_logo_base64}" 
+     style="width:260px; margin-bottom:10px;" />
+
+<h2 style="color:#ff4b4b; margin:0;">
+❤️ AI Based Heart Failure Risk Prediction System
+</h2>
+
+<p style="margin:5px 0 0 0;">Smarter Insights for a Healthier Heart</p>
+<p style="margin:0;">Predict • Understand • Prevent</p>
+
+</div>
+""",
         unsafe_allow_html=True
     )
+
 with col2:
-    st.image(f"data:image/png;base64,{logo_base64}", width=240)
+    st.image("data_vidwan_logo.jpeg", width=220)
 
 st.markdown("---")
+
 
 # =====================================================
 # SIDEBAR INPUTS
@@ -144,10 +165,12 @@ input_data = pd.get_dummies(
     drop_first=False
 )
 
-input_data = input_data.reindex(columns=feature_columns, fill_value=0)
+input_data = input_data.reindex(columns=feature_columns, fill_value=0)  
 input_data[scaler.feature_names_in_] = scaler.transform(
     input_data[scaler.feature_names_in_]
 )
+
+
 
 # =====================================================
 # EXPLANATION LOGIC
