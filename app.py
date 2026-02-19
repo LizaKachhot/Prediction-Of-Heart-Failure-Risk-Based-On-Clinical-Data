@@ -28,14 +28,12 @@ button[data-baseweb="tab"] {
     border: none !important;
 }
 
-/* Active tab */
 button[data-baseweb="tab"][aria-selected="true"] {
     background: transparent !important;
     color: #e15757 !important;
     border-bottom: 3px solid #e15757 !important;
 }
 
-/* Remove blue focus */
 button[data-baseweb="tab"]:focus {
     box-shadow: none !important;
 }
@@ -49,9 +47,7 @@ button[data-baseweb="tab"]:focus {
 
 /* -------- REMOVE STREAMLIT TOP STRIP -------- */
 header {visibility: hidden;}
-.block-container {
-    padding-top: 2rem;
-}
+.block-container { padding-top: 2rem; }
 
 /* -------- MAIN BACKGROUND -------- */
 .stApp {
@@ -59,26 +55,34 @@ header {visibility: hidden;}
     font-family: 'Segoe UI', sans-serif;
 }
 
-/* Force ONLY main AI heading */
+/* -------- FORCE AI TITLE COLOR -------- */
 div[data-testid="stMarkdownContainer"] h2 {
     color: #d46a6a !important;
 }
-         
-/* -------- MAIN TEXT COLOR (ONLY NORMAL TEXT) -------- */
-/*.stApp p,
-.stApp span,
-.stApp div {
-    color: #000000;
-}*/
 
-/* -------- SIDEBAR -------- */
+/* ===================================================== */
+/* ================= SIDEBAR FIX ======================= */
+/* ===================================================== */
+
 section[data-testid="stSidebar"] {
-    background-color: var(--sidebar-bg);
-    border-right: 1px solid var(--soft-border);
+    background: #fdeaea !important;
+    border-right: none !important;
+    box-shadow: none !important;
 }
 
-/* Sidebar text */
+/* Remove internal wrapper background */
+section[data-testid="stSidebar"] > div {
+    background: #fdeaea !important;
+}
+
+/* Remove resize handle vertical line */
+div[data-testid="stSidebarResizeHandle"] {
+    background: transparent !important;
+}
+
+/* Remove any internal borders */
 section[data-testid="stSidebar"] * {
+    border-right: none !important;
     color: #333 !important;
 }
 
@@ -88,7 +92,7 @@ section[data-testid="stSidebar"] h2 {
     font-weight: 700;
 }
 
-/* Sidebar slider color */
+/* Sidebar sliders */
 .stSlider [data-baseweb="slider"] > div > div:first-child {
     background-color: var(--accent) !important;
 }
@@ -97,35 +101,12 @@ section[data-testid="stSidebar"] h2 {
     background-color: var(--accent) !important;
     border: 2px solid white !important;
 }
-            
-/* Remove sidebar dark overlay */
-section[data-testid="stSidebar"] {
-    background-color: #fdeaea !important;
-    border-right: none !important;
-    box-shadow: none !important;
-}
-
-/* Remove internal overlay layer */
-section[data-testid="stSidebar"] > div {
-    background: transparent !important;
-}
 
 /* -------- DROPDOWN -------- */
 div[data-baseweb="select"] > div {
     background-color: white !important;
     border: 1px solid var(--soft-border) !important;
     border-radius: 6px !important;
-}
-
-/* Remove unwanted sidebar highlight / shadow */
-section[data-testid="stSidebar"] {
-    background-color: var(--sidebar-bg);
-    border-right: none !important;
-    box-shadow: none !important;
-}
-
-div[data-testid="stSidebarNav"] {
-    border-right: none !important;
 }
 
 /* -------- BUTTONS -------- */
@@ -177,10 +158,11 @@ hr {
 }
 
 /* -------- REMOVE FOOTER -------- */
-footer {visibility: hidden;}
+footer { visibility: hidden; }
 
 </style>
 """, unsafe_allow_html=True)
+
 
 
 # =====================================================
