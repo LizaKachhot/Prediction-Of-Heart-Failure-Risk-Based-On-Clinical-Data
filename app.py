@@ -18,25 +18,25 @@ st.set_page_config(
     layout="wide"
 )
 
-# =====================================================
-# CLEAN WHITE MAIN + PASTEL SIDEBAR (FIXED)
-# =====================================================
-
 st.markdown("""
 <style>
 
-div[role="tablist"] button {
+/* -------- FIX ACTIVE TAB STYLE -------- */
+button[data-baseweb="tab"] {
     background: transparent !important;
     color: #555 !important;
     border: none !important;
 }
 
-div[role="tablist"] button[aria-selected="true"] {
+/* Active tab */
+button[data-baseweb="tab"][aria-selected="true"] {
+    background: transparent !important;
     color: #e15757 !important;
     border-bottom: 3px solid #e15757 !important;
 }
 
-div[role="tablist"] button:focus {
+/* Remove blue focus */
+button[data-baseweb="tab"]:focus {
     box-shadow: none !important;
 }
 
@@ -59,21 +59,12 @@ header {visibility: hidden;}
     font-family: 'Segoe UI', sans-serif;
 }
 
-div[data-testid="stAlert"] {
-    color: #000000 !important;
+/* -------- MAIN TEXT COLOR (ONLY NORMAL TEXT) -------- */
+.stApp p,
+.stApp span,
+.stApp div {
+    color: #000000;
 }
-
-div[data-testid="stAlert"] * {
-    color: #000000 !important;
-}
-
-/* -------- FORCE DEFAULT TEXT TO BLACK -------- */
-.stApp,
-.stApp * {
-    color: #000000 !important;
-}
-
-<h2 style="color: #d46a6a;">
 
 /* -------- SIDEBAR -------- */
 section[data-testid="stSidebar"] {
@@ -85,12 +76,6 @@ section[data-testid="stSidebar"] {
 section[data-testid="stSidebar"] * {
     color: #333 !important;
 }
-            
-/* Fix slider min/max labels */
-section[data-testid="stSidebar"] span {
-    color: #000000 !important;
-}
-
 
 /* Sidebar title */
 section[data-testid="stSidebar"] h2 {
@@ -98,6 +83,7 @@ section[data-testid="stSidebar"] h2 {
     font-weight: 700;
 }
 
+/* Sidebar slider color */
 .stSlider [data-baseweb="slider"] > div > div:first-child {
     background-color: var(--accent) !important;
 }
@@ -117,7 +103,7 @@ div[data-baseweb="select"] > div {
 /* -------- BUTTONS -------- */
 .stButton > button {
     background-color: var(--accent) !important;
-    color: #000000 !important;
+    color: white !important;
     border-radius: 8px;
     border: none !important;
     padding: 10px 26px;
@@ -127,15 +113,14 @@ div[data-baseweb="select"] > div {
 
 .stButton > button:hover {
     background-color: #c85757 !important;
-    color: #000000 !important;
+    color: white !important;
     transform: translateY(-1px);
 }
-
 
 /* -------- DOWNLOAD BUTTON -------- */
 div.stDownloadButton > button {
     background-color: var(--accent);
-    color: #000000;
+    color: white;
     border-radius: 6px;
     border: none;
 }
@@ -145,17 +130,16 @@ div.stDownloadButton > button {
     background-color: var(--accent);
 }
 
-/* -------- MATCH TEXT SELECTION TO TITLE COLOR -------- */
+/* -------- MATCH TEXT SELECTION -------- */
 ::selection {
-    background: #fdeaea;   /* same soft sidebar tint */
-    color: #e15757;        /* SAME red as AI title */
+    background: #fdeaea;
+    color: #e15757;
 }
 
 ::-moz-selection {
     background: #fdeaea;
     color: #e15757;
 }
-
 
 /* -------- HR -------- */
 hr {
