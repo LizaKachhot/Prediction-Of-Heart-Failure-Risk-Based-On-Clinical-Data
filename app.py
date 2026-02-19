@@ -13,10 +13,167 @@ import os
 # PAGE CONFIG
 # =====================================================
 st.set_page_config(
-    page_title="AI Based Heart Failure Risk Prediction",
+    page_title="HeartWell",
     page_icon="❤️",
     layout="wide"
 )
+
+# =====================================================
+# CLEAN WHITE MAIN + PASTEL SIDEBAR (FIXED)
+# =====================================================
+
+st.markdown("""
+<style>
+
+/* -------- FIX ACTIVE TAB STYLE -------- */
+button[data-baseweb="tab"] {
+    background: transparent !important;
+    color: #555 !important;
+    border: none !important;
+}
+
+/* Active tab */
+button[data-baseweb="tab"][aria-selected="true"] {
+    background: transparent !important;
+    color: #e15757 !important;  /* SAME AS AI TITLE */
+    border-bottom: 3px solid #e15757 !important;
+}
+
+/* Remove blue focus */
+button[data-baseweb="tab"]:focus {
+    box-shadow: none !important;
+}
+
+
+/* -------- COLOR SYSTEM -------- */
+:root {
+    --accent: #d46a6a;
+    --sidebar-bg: #fdeaea;
+    --soft-border: #f3d4d4;
+}
+
+/* -------- REMOVE STREAMLIT TOP STRIP -------- */
+header {visibility: hidden;}
+.block-container {
+    padding-top: 2rem;
+}
+
+/* -------- MAIN BACKGROUND -------- */
+.stApp {
+    background-color: #fff7f7;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+
+/* -------- MAIN TEXT COLOR -------- */
+.stApp p,
+.stApp span,
+.stApp div {
+    color: #000000;
+}
+
+/* -------- SIDEBAR -------- */
+section[data-testid="stSidebar"] {
+    background-color: var(--sidebar-bg);
+    border-right: 1px solid var(--soft-border);
+}
+
+/* Sidebar text */
+section[data-testid="stSidebar"] * {
+    color: #333 !important;
+}
+
+/* Sidebar title */
+section[data-testid="stSidebar"] h2 {
+    color: var(--accent) !important;
+    font-weight: 700;
+}
+
+.stSlider [data-baseweb="slider"] > div > div:first-child {
+    background-color: var(--accent) !important;
+}
+
+.stSlider [role="slider"] {
+    background-color: var(--accent) !important;
+    border: 2px solid white !important;
+}
+
+/* Slider value text */
+.stSlider span {
+    color: #e15757 !important;
+    font-weight: 600;
+}
+
+
+/* -------- DROPDOWN -------- */
+div[data-baseweb="select"] > div {
+    background-color: white !important;
+    border: 1px solid var(--soft-border) !important;
+    border-radius: 6px !important;
+}
+
+/* -------- BUTTONS -------- */
+.stButton > button {
+    background-color: var(--accent) !important;
+    color: white !important;
+    border-radius: 8px;
+    border: none !important;
+    padding: 10px 26px;
+    font-weight: 600;
+    transition: all 0.2s ease-in-out;
+}
+
+.stButton > button:hover {
+    background-color: #c85757 !important;
+    color: white !important;
+    transform: translateY(-1px);
+}
+
+
+/* -------- DOWNLOAD BUTTON -------- */
+div.stDownloadButton > button {
+    background-color: var(--accent);
+    color: white;
+    border-radius: 6px;
+    border: none;
+}
+
+/* -------- TABS -------- */
+button[data-baseweb="tab"][aria-selected="true"] {
+    color: var(--accent);
+    border-bottom: 2px solid var(--accent);
+}
+
+/* -------- PROGRESS BAR -------- */
+.stProgress > div > div > div > div {
+    background-color: var(--accent);
+}
+
+/* -------- MATCH TEXT SELECTION TO TITLE COLOR -------- */
+::selection {
+    background: #fdeaea;   /* same soft sidebar tint */
+    color: #e15757;        /* SAME red as AI title */
+}
+
+::-moz-selection {
+    background: #fdeaea;
+    color: #e15757;
+}
+
+
+/* -------- HR -------- */
+hr {
+    border: none;
+    height: 1px;
+    background: var(--soft-border);
+}
+
+/* -------- REMOVE FOOTER -------- */
+footer {visibility: hidden;}
+
+</style>
+""", unsafe_allow_html=True)
+
 
 # =====================================================
 # LOAD MODEL
@@ -33,8 +190,7 @@ def load_logo(path):
     with open(path, "rb") as f:
         return base64.b64encode(f.read()).decode()
 
-heartwell_logo_base64 = load_logo("heartwell_logo.png")
-data_vidwan_logo_base64 = load_logo("data_vidwan_logo.jpeg")
+data_vidwan_logo_base64 = load_logo("data_vidwan_logo.png")
 
 
 # =====================================================
@@ -44,19 +200,39 @@ data_vidwan_logo_base64 = load_logo("data_vidwan_logo.jpeg")
 col1, col2 = st.columns([7, 2])
 
 with col1:
+    st.markdown("""
+<div style="margin-bottom:5px;">
+    <span style="
+        font-family: Georgia, serif;
+        font-size: 48px;
+        font-style: italic;
+        color: #d46a6a;
+        font-weight: 600;
+    ">
+        HeartWell
+    </span>
+</div>
+""", unsafe_allow_html=True)
+
+
     st.markdown(
         f"""
 <div style="display:flex; flex-direction:column; align-items:flex-start;">
 
-<img src="data:image/png;base64,{heartwell_logo_base64}" 
-     style="width:260px; margin-bottom:10px;" />
-
-<h2 style="color:#ff4b4b; margin:0;">
+<h2 style="color: #d46a6a; margin:0;">
 ❤️ AI Based Heart Failure Risk Prediction System
 </h2>
 
-<p style="margin:5px 0 0 0;">Smarter Insights for a Healthier Heart</p>
-<p style="margin:0;">Predict • Understand • Prevent</p>
+<p style="margin:5px 0 0 0; color:#000000;">
+    Smarter Insights for a Healthier Heart
+</p>
+
+<p style="margin:0; color:#000000;">
+    Predict • Understand • Prevent
+</p>
+
+
+
 
 </div>
 """,
@@ -64,9 +240,12 @@ with col1:
     )
 
 with col2:
-    st.image("data_vidwan_logo.jpeg", width=220)
+    st.image("data_vidwan_logo.png", width=220)
 
-st.markdown("---")
+st.markdown(
+    '<hr style="margin-top:10px; margin-bottom:10px;">',
+    unsafe_allow_html=True
+)
 
 
 # =====================================================
@@ -662,7 +841,10 @@ tab1, tab2, tab3, tab4 = st.tabs([
 # TAB 1 — PREDICTION
 # =====================================================
 with tab1:
+
     if st.button("🚀 Predict Heart Failure Risk"):
+
+        # ---------------- Prediction ----------------
         prob = model.predict_proba(
             input_data,
             validate_features=False
@@ -673,47 +855,85 @@ with tab1:
             validate_features=False
         )[0]
 
+        # ---------------- Header ----------------
         st.subheader("🎯 Risk Assessment")
         st.progress(int(prob))
 
-        gauge = go.Figure(go.Indicator(
-            mode="gauge+number",
-            value=prob,
-            number={"suffix": "%"},
-            gauge={
-                "axis": {"range": [0, 100]},
-                "bar": {"color": "#ff4b4b"},
-                "steps": [
-                    {"range": [0, 30], "color": "#2ecc71"},
-                    {"range": [30, 60], "color": "#f1c40f"},
-                    {"range": [60, 100], "color": "#e74c3c"},
-                ],
-            }
-        ))
-        st.plotly_chart(gauge, use_container_width=True)
+                # ---------------- Gauge ----------------
+        gauge = go.Figure(
+            go.Indicator(
+                mode="gauge+number",
+                value=prob,
+                number={
+                    "suffix": "%",
+                    "font": {
+                        "color": "#2c2c2c",
+                        "size": 75
+                    }
+                },
+                domain={
+                    "x": [0.25, 0.75],   # THIS controls width
+                    "y": [0, 1]
+                },
+                gauge={
+                    "axis": {
+                        "range": [0, 100],
+                        "tickcolor": "#2c2c2c",
+                        "tickwidth": 1
+                    },
+                    "bar": {
+                        "color": "#e15757",
+                        "thickness": 0.3
+                    },
+                    "steps": [
+                        {"range": [0, 30], "color": "#2ecc71"},
+                        {"range": [30, 60], "color": "#f1c40f"},
+                        {"range": [60, 100], "color": "#e74c3c"},
+                    ],
+                }
+            )
+        )
 
+        gauge.update_layout(
+            height=350,
+            margin=dict(l=20, r=20, t=40, b=0),
+            paper_bgcolor="#fff7f7",
+            plot_bgcolor="#fff7f7",
+            font={"color": "#2c2c2c"}
+        )
+
+        st.plotly_chart(
+            gauge,
+            use_container_width=True
+        )
+
+
+        # ---------------- Risk Label ----------------
         if pred == 0:
             st.success("✅ LOW RISK")
             risk_label = "Low Risk"
         else:
             st.error("⚠️ HIGH RISK")
             risk_label = "High Risk"
-        
-        # 🔹 Generate dynamic explanations based on actual values
+
+        # ---------------- Dynamic Explanation ----------------
         dynamic_explanations, dynamic_recommendations = generate_dynamic_explanations(
             raw_input_summary
         )
+
         st.session_state["dynamic_explanations"] = dynamic_explanations
         st.session_state["dynamic_recommendations"] = dynamic_recommendations
 
+        # ---------------- PDF Generation ----------------
         pdf_file = generate_pdf(
-                    prob,
-                    risk_label,
-                    raw_input_summary,
-                    dynamic_explanations, 
-                    dynamic_recommendations
-                )
+            prob,
+            risk_label,
+            raw_input_summary,
+            dynamic_explanations,
+            dynamic_recommendations
+        )
 
+        # ---------------- Download Button ----------------
         with open(pdf_file, "rb") as f:
             st.download_button(
                 "📄 Download Medical Report (PDF)",
@@ -721,7 +941,6 @@ with tab1:
                 file_name=pdf_file,
                 mime="application/pdf"
             )
-      
 
 # =====================================================
 # TAB 2 — EXPLANATION
@@ -892,4 +1111,9 @@ Smoking damages blood vessels and increases cardiovascular risk.
 
 st.markdown("---")
 
-st.caption("Built with ❤️ using Streamlit & XGBoost | Data Vidwan")
+st.markdown(
+    '<p style="color:#000000; text-align:center; font-size:14px;">'
+    'Built with ❤️ using Streamlit & XGBoost | Data Vidwan'
+    '</p>',
+    unsafe_allow_html=True
+)
