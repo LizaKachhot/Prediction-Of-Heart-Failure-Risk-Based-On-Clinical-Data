@@ -59,8 +59,13 @@ header {visibility: hidden;}
     font-family: 'Segoe UI', sans-serif;
 }
 
+div[data-testid="stAlert"] {
+    color: #000000 !important;
+}
 
-
+div[data-testid="stAlert"] * {
+    color: #000000 !important;
+}
 
 /* -------- SIDEBAR -------- */
 section[data-testid="stSidebar"] {
@@ -86,11 +91,6 @@ section[data-testid="stSidebar"] h2 {
 .stSlider [role="slider"] {
     background-color: var(--accent) !important;
     border: 2px solid white !important;
-}
-
-/* Slider value text */
-.stSlider [data-baseweb="slider"] span {
-    font-weight: 600;
 }
 
 /* -------- DROPDOWN -------- */
