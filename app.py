@@ -21,163 +21,170 @@ st.set_page_config(
 st.markdown("""
 <style>
 
-/* -------- FIX ACTIVE TAB STYLE -------- */
-button[data-baseweb="tab"] {
-    background: transparent !important;
-    color: #555 !important;
-    border: none !important;
-}
+    /* -------- FIX ACTIVE TAB STYLE -------- */
+    button[data-baseweb="tab"] {
+        background: transparent !important;
+        color: #555 !important;
+        border: none !important;
+    }
 
-/* Active tab */
-button[data-baseweb="tab"][aria-selected="true"] {
-    background: transparent !important;
-    color: #e15757 !important;
-    border-bottom: 3px solid #e15757 !important;
-}
+    /* Active tab */
+    button[data-baseweb="tab"][aria-selected="true"] {
+        background: transparent !important;
+        color: #e15757 !important;
+        border-bottom: 3px solid #e15757 !important;
+    }
 
-/* Remove blue focus */
-button[data-baseweb="tab"]:focus {
-    box-shadow: none !important;
-}
+    /* Remove blue focus */
+    button[data-baseweb="tab"]:focus {
+        box-shadow: none !important;
+    }
 
-/* -------- COLOR SYSTEM -------- */
-:root {
-    --accent: #d46a6a;
-    --sidebar-bg: #fdeaea;
-    --soft-border: #f3d4d4;
-}
+    /* -------- COLOR SYSTEM -------- */
+    :root {
+        --accent: #d46a6a;
+        --sidebar-bg: #fdeaea;
+        --soft-border: #f3d4d4;
+    }
 
-/* -------- REMOVE STREAMLIT TOP STRIP -------- */
-header {visibility: hidden;}
-.block-container {
-    padding-top: 2rem;
-}
+    /* -------- REMOVE STREAMLIT TOP STRIP -------- */
+    header {
+        visibility: hidden;
+    }
 
-/* -------- MAIN BACKGROUND -------- */
-.stApp {
-    background-color: #fff7f7;
-    font-family: 'Segoe UI', sans-serif;
-}
+    .block-container {
+        padding-top: 2rem;
+    }
 
-/* Force ONLY main AI heading */
-div[data-testid="stMarkdownContainer"] h2 {
-    color: #d46a6a !important;
-}
-         
-/* -------- MAIN TEXT COLOR (ONLY NORMAL TEXT) -------- */
-/*.stApp p,
-.stApp span,
-.stApp div {
-    color: #000000;
-}*/
+    /* -------- MAIN BACKGROUND -------- */
+    .stApp {
+        background-color: #fff7f7;
+        font-family: 'Segoe UI', sans-serif;
+    }
 
-/* -------- SIDEBAR -------- */
-section[data-testid="stSidebar"] {
-    background-color: var(--sidebar-bg);
-    border-right: 1px solid var(--soft-border);
-}
+    /* Force ONLY main AI heading */
+    div[data-testid="stMarkdownContainer"] h2 {
+        color: #d46a6a !important;
+    }
+             
+    /* -------- MAIN TEXT COLOR (ONLY NORMAL TEXT) -------- */
+    /*
+    .stApp p,
+    .stApp span,
+    .stApp div {
+        color: #000000;
+    }
+    */
 
-/* Sidebar text */
-section[data-testid="stSidebar"] * {
-    color: #333 !important;
-}
+    /* -------- SIDEBAR -------- */
+    section[data-testid="stSidebar"] {
+        background-color: var(--sidebar-bg);
+        border-right: 1px solid var(--soft-border);
+    }
 
-/* Sidebar title */
-section[data-testid="stSidebar"] h2 {
-    color: var(--accent) !important;
-    font-weight: 700;
-}
+    /* Sidebar text */
+    section[data-testid="stSidebar"] * {
+        color: #333 !important;
+    }
 
-/* Sidebar slider color */
-.stSlider [data-baseweb="slider"] > div > div:first-child {
-    background-color: var(--accent) !important;
-}
+    /* Sidebar title */
+    section[data-testid="stSidebar"] h2 {
+        color: var(--accent) !important;
+        font-weight: 700;
+    }
 
-.stSlider [role="slider"] {
-    background-color: var(--accent) !important;
-    border: 2px solid white !important;
-}
-            
-/* Remove sidebar dark overlay */
-section[data-testid="stSidebar"] {
-    background-color: #fdeaea !important;
-    border-right: none !important;
-    box-shadow: none !important;
-}
+    /* Sidebar slider color */
+    .stSlider [data-baseweb="slider"] > div > div:first-child {
+        background-color: var(--accent) !important;
+    }
 
-/* Remove internal overlay layer */
-section[data-testid="stSidebar"] > div {
-    background: transparent !important;
-}
+    .stSlider [role="slider"] {
+        background-color: var(--accent) !important;
+        border: 2px solid white !important;
+    }
+                
+    /* Remove sidebar dark overlay */
+    section[data-testid="stSidebar"] {
+        background-color: #fdeaea !important;
+        border-right: none !important;
+        box-shadow: none !important;
+    }
 
-/* -------- DROPDOWN -------- */
-div[data-baseweb="select"] > div {
-    background-color: white !important;
-    border: 1px solid var(--soft-border) !important;
-    border-radius: 6px !important;
-}
+    /* Remove internal overlay layer */
+    section[data-testid="stSidebar"] > div {
+        background: transparent !important;
+    }
 
-/* Remove unwanted sidebar highlight / shadow */
-section[data-testid="stSidebar"] {
-    background-color: var(--sidebar-bg);
-    border-right: none !important;
-    box-shadow: none !important;
-}
+    /* -------- DROPDOWN -------- */
+    div[data-baseweb="select"] > div {
+        background-color: white !important;
+        border: 1px solid var(--soft-border) !important;
+        border-radius: 6px !important;
+    }
 
-div[data-testid="stSidebarNav"] {
-    border-right: none !important;
-}
+    /* Remove unwanted sidebar highlight / shadow */
+    section[data-testid="stSidebar"] {
+        background-color: var(--sidebar-bg);
+        border-right: none !important;
+        box-shadow: none !important;
+    }
 
-/* -------- BUTTONS -------- */
-.stButton > button {
-    background-color: var(--accent) !important;
-    color: white !important;
-    border-radius: 8px;
-    border: none !important;
-    padding: 10px 26px;
-    font-weight: 600;
-    transition: all 0.2s ease-in-out;
-}
+    div[data-testid="stSidebarNav"] {
+        border-right: none !important;
+    }
 
-.stButton > button:hover {
-    background-color: #c85757 !important;
-    color: white !important;
-    transform: translateY(-1px);
-}
+    /* -------- BUTTONS -------- */
+    .stButton > button {
+        background-color: var(--accent) !important;
+        color: white !important;
+        border-radius: 8px;
+        border: none !important;
+        padding: 10px 26px;
+        font-weight: 600;
+        transition: all 0.2s ease-in-out;
+    }
 
-/* -------- DOWNLOAD BUTTON -------- */
-div.stDownloadButton > button {
-    background-color: var(--accent);
-    color: white;
-    border-radius: 6px;
-    border: none;
-}
+    .stButton > button:hover {
+        background-color: #c85757 !important;
+        color: white !important;
+        transform: translateY(-1px);
+    }
 
-/* -------- PROGRESS BAR -------- */
-.stProgress > div > div > div > div {
-    background-color: var(--accent);
-}
+    /* -------- DOWNLOAD BUTTON -------- */
+    div.stDownloadButton > button {
+        background-color: var(--accent);
+        color: white;
+        border-radius: 6px;
+        border: none;
+    }
 
-/* -------- MATCH TEXT SELECTION -------- */
-::selection {
-    background: #fdeaea;
-    color: #e15757;
-}
+    /* -------- PROGRESS BAR -------- */
+    .stProgress > div > div > div > div {
+        background-color: var(--accent);
+    }
 
-::-moz-selection {
-    background: #fdeaea;
-    color: #e15757;
-}
+    /* -------- MATCH TEXT SELECTION -------- */
+    ::selection {
+        background: #fdeaea;
+        color: #e15757;
+    }
 
-/* -------- HR -------- */
-hr {
-    border: none;
-    height: 1px;
-    background: var(--soft-border);
-}
+    ::-moz-selection {
+        background: #fdeaea;
+        color: #e15757;
+    }
 
-/* -------- REMOVE FOOTER -------- */
-footer {visibility: hidden;}
+    /* -------- HR -------- */
+    hr {
+        border: none;
+        height: 1px;
+        background: var(--soft-border);
+    }
+
+    /* -------- REMOVE FOOTER -------- */
+    footer {
+        visibility: hidden;
+    }
 
 </style>
 """, unsafe_allow_html=True)
