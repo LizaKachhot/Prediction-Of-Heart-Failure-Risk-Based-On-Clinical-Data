@@ -67,6 +67,14 @@ div[data-testid="stAlert"] * {
     color: #000000 !important;
 }
 
+/* -------- FORCE DEFAULT TEXT TO BLACK -------- */
+.stApp,
+.stApp * {
+    color: #000000 !important;
+}
+
+<h2 style="color: #d46a6a;">
+
 /* -------- SIDEBAR -------- */
 section[data-testid="stSidebar"] {
     background-color: var(--sidebar-bg);
@@ -77,6 +85,12 @@ section[data-testid="stSidebar"] {
 section[data-testid="stSidebar"] * {
     color: #333 !important;
 }
+            
+/* Fix slider min/max labels */
+section[data-testid="stSidebar"] span {
+    color: #000000 !important;
+}
+
 
 /* Sidebar title */
 section[data-testid="stSidebar"] h2 {
@@ -103,7 +117,7 @@ div[data-baseweb="select"] > div {
 /* -------- BUTTONS -------- */
 .stButton > button {
     background-color: var(--accent) !important;
-    color: white !important;
+    color: #000000 !important;
     border-radius: 8px;
     border: none !important;
     padding: 10px 26px;
@@ -113,7 +127,7 @@ div[data-baseweb="select"] > div {
 
 .stButton > button:hover {
     background-color: #c85757 !important;
-    color: white !important;
+    color: #000000 !important;
     transform: translateY(-1px);
 }
 
@@ -121,7 +135,7 @@ div[data-baseweb="select"] > div {
 /* -------- DOWNLOAD BUTTON -------- */
 div.stDownloadButton > button {
     background-color: var(--accent);
-    color: white;
+    color: #000000;
     border-radius: 6px;
     border: none;
 }
