@@ -59,6 +59,12 @@ header {visibility: hidden;}
     font-family: 'Segoe UI', sans-serif;
 }
 
+/* Force AI Based title to match HeartWell */
+h2 {
+    color: #d46a6a !important;
+}
+
+            
 /* -------- MAIN TEXT COLOR (ONLY NORMAL TEXT) -------- */
 .stApp p,
 .stApp span,
@@ -98,6 +104,13 @@ div[data-baseweb="select"] > div {
     background-color: white !important;
     border: 1px solid var(--soft-border) !important;
     border-radius: 6px !important;
+}
+
+/* Remove unwanted sidebar highlight / shadow */
+section[data-testid="stSidebar"] {
+    background-color: var(--sidebar-bg);
+    border-right: none !important;
+    box-shadow: none !important;
 }
 
 /* -------- BUTTONS -------- */
