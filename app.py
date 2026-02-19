@@ -113,6 +113,10 @@ section[data-testid="stSidebar"] {
     box-shadow: none !important;
 }
 
+div[data-testid="stSidebarNav"] {
+    border-right: none !important;
+}
+
 /* -------- BUTTONS -------- */
 .stButton > button {
     background-color: var(--accent) !important;
