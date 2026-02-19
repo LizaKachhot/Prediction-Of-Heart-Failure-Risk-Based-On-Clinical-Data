@@ -25,25 +25,20 @@ st.set_page_config(
 st.markdown("""
 <style>
 
-/* -------- FIX ACTIVE TAB STYLE -------- */
-button[data-baseweb="tab"] {
+div[role="tablist"] button {
     background: transparent !important;
     color: #555 !important;
     border: none !important;
 }
 
-/* Active tab */
-button[data-baseweb="tab"][aria-selected="true"] {
-    background: transparent !important;
-    color: #e15757 !important;  /* SAME AS AI TITLE */
+div[role="tablist"] button[aria-selected="true"] {
+    color: #e15757 !important;
     border-bottom: 3px solid #e15757 !important;
 }
 
-/* Remove blue focus */
-button[data-baseweb="tab"]:focus {
+div[role="tablist"] button:focus {
     box-shadow: none !important;
 }
-
 
 /* -------- COLOR SYSTEM -------- */
 :root {
@@ -65,12 +60,7 @@ header {visibility: hidden;}
 }
 
 
-/* -------- MAIN TEXT COLOR -------- */
-.stApp p,
-.stApp span,
-.stApp div {
-    color: #000000;
-}
+
 
 /* -------- SIDEBAR -------- */
 section[data-testid="stSidebar"] {
@@ -99,11 +89,9 @@ section[data-testid="stSidebar"] h2 {
 }
 
 /* Slider value text */
-.stSlider span {
-    color: #e15757 !important;
+.stSlider [data-baseweb="slider"] span {
     font-weight: 600;
 }
-
 
 /* -------- DROPDOWN -------- */
 div[data-baseweb="select"] > div {
@@ -136,12 +124,6 @@ div.stDownloadButton > button {
     color: white;
     border-radius: 6px;
     border: none;
-}
-
-/* -------- TABS -------- */
-button[data-baseweb="tab"][aria-selected="true"] {
-    color: var(--accent);
-    border-bottom: 2px solid var(--accent);
 }
 
 /* -------- PROGRESS BAR -------- */
