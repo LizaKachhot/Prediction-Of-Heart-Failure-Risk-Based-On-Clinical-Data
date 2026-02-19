@@ -59,18 +59,17 @@ header {visibility: hidden;}
     font-family: 'Segoe UI', sans-serif;
 }
 
-/* Force AI Based title to match HeartWell */
-h2 {
+/* Force ONLY main AI heading */
+div[data-testid="stMarkdownContainer"] h2 {
     color: #d46a6a !important;
 }
-
-            
+         
 /* -------- MAIN TEXT COLOR (ONLY NORMAL TEXT) -------- */
-.stApp p,
+/*.stApp p,
 .stApp span,
 .stApp div {
     color: #000000;
-}
+}*/
 
 /* -------- SIDEBAR -------- */
 section[data-testid="stSidebar"] {
@@ -97,6 +96,18 @@ section[data-testid="stSidebar"] h2 {
 .stSlider [role="slider"] {
     background-color: var(--accent) !important;
     border: 2px solid white !important;
+}
+            
+/* Remove sidebar dark overlay */
+section[data-testid="stSidebar"] {
+    background-color: #fdeaea !important;
+    border-right: none !important;
+    box-shadow: none !important;
+}
+
+/* Remove internal overlay layer */
+section[data-testid="stSidebar"] > div {
+    background: transparent !important;
 }
 
 /* -------- DROPDOWN -------- */
