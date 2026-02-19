@@ -9,3 +9,5 @@ plotly
 fpdf
 altair<5
 Pillow>=10.2.0
+streamlit==1.32.2
+plotly==5.18.0
