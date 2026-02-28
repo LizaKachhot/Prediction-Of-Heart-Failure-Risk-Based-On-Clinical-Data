@@ -1,0 +1,1668 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HeartWell – AI Cardiovascular Intelligence</title>
+  <!-- Chart.js CDN (was referenced but never included) -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    /* ── CSS Custom Properties ── */
+    :root {
+      --rose:  #8e3a59;
+      --blush: #b76e79;
+      --card:  #2a2433;
+    }
+
+    html, body {
+      margin:      0;
+      padding:     0;
+      height:      100vh;
+      font-family: 'Segoe UI', sans-serif;
+      background:  linear-gradient(145deg, #1f1b24, #2a2433);
+      color:       #f4eef2;
+    }
+
+    /* ── Screens ── */
+    .screen {
+      position:        absolute;
+      width:           100%;
+      height:          100%;
+      display:         flex;
+      justify-content: center;
+      align-items:     center;
+      flex-direction:  column;
+      opacity:         0;
+      pointer-events:  none;    /* blocked while inactive */
+      transition:      opacity 0.5s;
+    }
+
+    .screen.active {
+      opacity:        1;
+      z-index:        10;
+      pointer-events: auto;
+    }
+
+    /* ── Hero ── */
+    .hero-title {
+      font-family: Georgia, serif;
+      font-size:   70px;
+      color:       var(--blush);
+    }
+
+    .subtitle {
+      margin-top: 20px;
+      opacity:    0.8;
+    }
+
+    /* ── Glow Button ── */
+    .glow-btn {
+      margin-top:    35px;
+      padding:       14px 38px;
+      border:        none;
+      border-radius: 40px;
+      background:    var(--rose);
+      color:         white;
+      cursor:        pointer;
+      box-shadow:    0 0 20px rgba(142, 58, 89, 0.5);
+      transition:    transform 0.3s;
+    }
+    .glow-btn:hover { transform: scale(1.05); }
+
+    /* ── Card ── */
+    .card {
+      width:      750px;
+      max-height: 78vh;
+      overflow-y: auto;
+      background: var(--card);
+      padding:    40px;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+    }
+    .card::-webkit-scrollbar { display: none; }
+
+    /* ── Progress Bar ── */
+    .progress {
+      height:        6px;
+      background:    #3a3442;
+      border-radius: 10px;
+      margin-bottom: 30px;
+    }
+
+    .progress-bar {
+      height:        100%;
+      width:         25%;
+      background:    var(--rose);
+      border-radius: 10px;
+      transition:    width 0.4s;
+    }
+
+    /* ── Steps ── */
+    .step         { display: none; }
+    .step.active  { display: block; }
+
+    h2 { margin-bottom: 20px; }
+
+    /* ── Labels ── */
+    label {
+      display:       block;
+      margin-top:    18px;
+      margin-bottom: 6px;
+      font-weight:   500;
+    }
+
+    /* ── Info Icon ── */
+    .info-icon {
+      margin-left:   8px;
+      background:    var(--rose);
+      width:         16px;
+      height:        16px;
+      border-radius: 50%;
+      display:       inline-block;
+      text-align:    center;
+      font-size:     11px;
+      line-height:   16px;
+      cursor:        pointer;
+    }
+
+    /* ── Slider ── */
+    .slider-wrapper {
+      margin-bottom: 22px;
+      position:      relative;
+    }
+
+    .value-bubble {
+      position:      absolute;
+      top:           -3px;
+      transform:     translateX(-50%);
+      background:    var(--rose);
+      padding:       3px 9px;
+      border-radius: 10px;
+      font-size:     11px;
+    }
+
+    .range-labels {
+      display:         flex;
+      justify-content: space-between;
+      font-size:       10px;
+      opacity:         0.6;
+    }
+
+    input[type="range"] {
+      -webkit-appearance: none;
+      width:          100%;
+      height:         6px;
+      border-radius:  5px;
+      background:     #3a3442;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width:         16px;
+      height:        16px;
+      border-radius: 50%;
+      background:    var(--blush);
+      box-shadow:    0 0 10px rgba(183, 110, 121, 0.7);
+    }
+
+    /* ── Select ── */
+    select {
+      width:         100%;
+      padding:       10px 12px;
+      border-radius: 10px;
+      background:    #3a3442;
+      color:         white;
+      border:        1px solid rgba(255, 255, 255, 0.08);
+      margin-bottom: 15px;
+    }
+
+    /* ── Nav ── */
+    .nav {
+      display:         flex;
+      justify-content: space-between;
+      margin-top:      25px;
+    }
+
+    /* ── Info Modal Overlay ── */
+    .modal-overlay {
+      position:        fixed;
+      top:             0;
+      left:            0;
+      width:           100%;
+      height:          100%;
+      backdrop-filter: blur(8px);
+      background:      rgba(0, 0, 0, 0.4);
+      display:         none;
+      justify-content: center;
+      align-items:     center;
+      z-index:         9999;
+    }
+
+    .modal {
+      width:         520px;
+      background:    var(--card);
+      padding:       28px;
+      border-radius: 18px;
+      box-shadow:    0 20px 60px rgba(0, 0, 0, 0.6);
+    }
+    .modal p {
+      font-size:   15px;
+      line-height: 1.5;
+      font-weight: 400;
+    }
+
+    /* ── Toggle ── */
+    .toggle {
+      width:         50px;
+      height:        26px;
+      background:    #3a3442;
+      border-radius: 20px;
+      position:      relative;
+      cursor:        pointer;
+      transition:    background 0.3s;
+    }
+    .toggle::after {
+      content:       '';
+      width:         22px;
+      height:        22px;
+      background:    white;
+      border-radius: 50%;
+      position:      absolute;
+      top:           2px;
+      left:          2px;
+      transition:    left 0.3s;
+    }
+    .toggle.active               { background: var(--rose); }
+    .toggle.active::after        { left: 26px; }
+
+    /* ── Segmented Control ── */
+    .segmented {
+      display:    flex;
+      gap:        8px;
+      margin-top: 6px;
+    }
+    .segmented button {
+      flex:          1;
+      padding:       8px;
+      border-radius: 10px;
+      border:        none;
+      background:    #3a3442;
+      color:         white;
+      cursor:        pointer;
+      transition:    background 0.2s;
+    }
+
+    /* ── Option Cards ── */
+    .option-card-group {
+      display:               grid;
+      grid-template-columns: 1fr 1fr;
+      gap:                   10px;
+      margin-top:            6px;
+    }
+    .option-card {
+      padding:       10px;
+      border-radius: 12px;
+      background:    #3a3442;
+      cursor:        pointer;
+      transition:    background 0.2s;
+      font-size:     13px;
+    }
+
+    /* Active states for interactive controls */
+    .segmented button.active,
+    .option-card.active,
+    .toggle.active {
+      background: var(--rose);
+      box-shadow: 0 0 15px rgba(183, 110, 121, 0.7);
+      border:     1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    /* ── Number Input ── */
+    .number-input {
+      display:     flex;
+      align-items: center;
+      gap:         6px;
+      margin-top:  6px;
+    }
+    .number-input input {
+      width:         100px;
+      padding:       8px;
+      background:    #3a3442;
+      border:        none;
+      border-radius: 8px;
+      color:         white;
+      text-align:    center;
+    }
+    .number-input button {
+      width:         32px;
+      height:        32px;
+      border:        none;
+      border-radius: 8px;
+      background:    #3a3442;
+      color:         white;
+      cursor:        pointer;
+      transition:    background 0.2s;
+    }
+    .number-input button:hover { background: var(--rose); }
+
+    /* Remove default number-input arrows */
+    input[type="number"]::-webkit-inner-spin-button,
+    input[type="number"]::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+    input[type="number"] { -moz-appearance: textfield; }
+
+    /* ── Two-column grid ── */
+    .two-column {
+      display:               grid;
+      grid-template-columns: 1fr 1fr;
+      gap:                   20px;
+      margin-top:            15px;
+    }
+
+    /* ── Validation ── */
+    .validation-error {
+      border:        2px solid #e74c3c;
+      border-radius: 12px;
+      padding:       8px;
+    }
+    .validation-text {
+      color:      #e74c3c;
+      font-size:  12px;
+      margin-top: 6px;
+    }
+
+    /* ── Risk Overlay ── */
+    .risk-overlay {
+      position:        fixed;
+      top:             0;
+      left:            0;
+      width:           100%;
+      height:          100%;
+      backdrop-filter: blur(10px);
+      background:      rgba(0, 0, 0, 0.5);
+      display:         none;
+      justify-content: center;
+      align-items:     center;
+      z-index:         10000;
+      animation:       fadeIn 0.4s ease;
+    }
+    .risk-panel {
+      width:         500px;
+      background:    var(--card);
+      padding:       40px;
+      border-radius: 20px;
+      text-align:    center;
+      box-shadow:    0 25px 80px rgba(0, 0, 0, 0.7);
+    }
+    .risk-score {
+      font-size:   64px;
+      font-weight: 600;
+      margin:      20px 0;
+      transition:  color 0.3s;
+    }
+    .risk-label {
+      font-size:     18px;
+      opacity:       0.9;
+      margin-bottom: 30px;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+
+    
+    #printReport {
+      display: none;
+    }
+
+    /* ==============================
+    PRINT MEDICAL REPORT FORMAT
+    ============================== */
+
+  @media print {
+
+  body * {
+    visibility: hidden;
+  }
+
+  #printReport, 
+  #printReport * {
+    visibility: visible;
+  }
+
+  #printReport {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 210mm;
+    min-height: 297mm;
+    background: white;
+    padding: 18mm;
+    font-family: Arial, sans-serif;
+    color: black;
+  }
+
+  .print-page {
+  page-break-after: always;
+  position: relative;
+}
+
+.print-page:last-child {
+  page-break-after: auto;
+}
+
+  #heroScreen,
+  #assessmentScreen,
+  #reportScreen,
+  .risk-overlay,
+  .modal-overlay,
+  .data-vidwan-logo {
+    display: none !important;
+  }
+
+}
+
+  /* ── Data Vidwan Logo (Top Right) ── */
+  .data-vidwan-logo {
+    position: fixed;
+    top: 20px;
+    left: 30px;
+    z-index: 20000;
+    opacity: 1;
+    transition: opacity 0.4s ease;   /* Smooth fade */
+  }
+
+  .data-vidwan-logo img {
+    height: 100px;
+    width: auto;
+  }
+
+  </style>
+</head>
+
+<body>
+
+  <!-- Data Vidwan Logo -->
+  <div class="data-vidwan-logo">
+    <img src="data_vidwan_logo.png" alt="Data Vidwan Logo">
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       SCREEN 1 – HERO
+  ════════════════════════════════════════ -->
+  <div id="heroScreen" class="screen active">
+    <div class="hero-title">HeartWell</div>
+    <div class="subtitle">AI-Powered Cardiovascular Intelligence</div>
+    <button class="glow-btn" onclick="startAssessment()">Start Assessment</button>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════
+       SCREEN 2 – ASSESSMENT (4 steps)
+  ════════════════════════════════════════ -->
+  <div id="assessmentScreen" class="screen">
+    <div class="card">
+
+      <!-- Progress Bar -->
+      <div class="progress">
+        <div class="progress-bar" id="progressBar"></div>
+      </div>
+
+      <!-- ── STEP 1 – Personal ── -->
+      <div class="step active" id="step1">
+        <h2>Personal</h2>
+
+        <!-- Age Slider -->
+        <div class="slider-wrapper">
+          <label>Age
+            <span class="info-icon"
+              onclick="openModal('Age',
+                '<b>Definition:</b><br>\
+                Age represents the patient\'s chronological age in years.<br><br>\
+                <b>Clinical Significance:</b><br>\
+                With increasing age, blood vessels gradually lose elasticity and arterial walls may thicken. Over time, fatty deposits (atherosclerosis) can accumulate inside coronary arteries.<br><br>\
+                <b>Risk Classification:</b><br>\
+                <b>18–44 years:</b> Lower baseline cardiovascular risk<br>\
+                <b>45–64 years:</b> Gradual increase in risk<br>\
+                <b>≥65 years:</b> Significantly elevated cardiovascular risk<br><br>\
+                <b>Clinical Impact:</b><br>\
+                Although age cannot be modified, managing other risk factors can substantially reduce overall heart disease probability.')">i</span>
+          </label>
+          <input type="range" min="18" max="90" value="60" oninput="updateSlider(this)">
+          <div class="value-bubble">60</div>
+          <div class="range-labels"><span>18</span><span>90</span></div>
+        </div>
+
+        <!-- Sex Select -->
+        <label>Sex
+          <span class="info-icon"
+            onclick="openModal('Sex',
+              '<b>Definition:</b><br>\
+              Biological sex influences cardiovascular risk patterns and disease presentation.<br><br>\
+              <b>Clinical Significance:</b><br>\
+              Males generally develop coronary artery disease at a younger age. In females, estrogen provides partial vascular protection before menopause.<br><br>\
+              After menopause, this protective effect declines and cardiovascular risk increases.<br><br>\
+              <b>Clinical Impact:</b><br>\
+              Sex-based differences affect the timing and likelihood of heart disease and improve risk prediction accuracy.')">i</span>
+        </label>
+        <select id="sexSelect">
+          <option>Male</option>
+          <option>Female</option>
+        </select>
+
+        <!-- Smoking Select -->
+        <label>Smoking Status
+          <span class="info-icon"
+            onclick="openModal('Smoking Status',
+              '<b>Definition:</b><br>\
+              Smoking status reflects exposure to tobacco and its cardiovascular effects.<br><br>\
+              <b>Pathophysiology:</b><br>\
+              Tobacco damages blood vessel lining, increases inflammation, promotes clot formation, and accelerates plaque buildup (atherosclerosis).<br><br>\
+              <b>Classification:</b><br>\
+              <b>Never:</b> No tobacco exposure<br>\
+              <b>Former:</b> Past exposure; risk gradually declines after quitting<br>\
+              <b>Current:</b> Active tobacco use<br><br>\
+              <b>Clinical Impact:</b><br>\
+              Active smoking significantly increases the risk of heart attack, stroke, and heart failure.')">i</span>
+        </label>
+        <select id="smokingSelect">
+          <option>Never</option>
+          <option>Former</option>
+          <option>Current</option>
+        </select>
+      </div><!-- /step1 -->
+
+
+      <!-- ── STEP 2 – Vitals ── -->
+      <div class="step" id="step2">
+        <h2>Vitals</h2>
+
+        <!-- Blood Pressure Slider -->
+        <div class="slider-wrapper">
+          <label>Resting Blood Pressure
+            <span class="info-icon"
+              onclick="openModal('Resting Blood Pressure',
+                '<b>Definition:</b><br>\
+                Resting blood pressure measures the force of blood against artery walls while the body is at rest.<br><br>\
+                <b>Clinical Significance:</b><br>\
+                Persistent elevation increases cardiac workload and damages blood vessels over time.<br><br>\
+                <b>Classification:</b><br>\
+                <b>Normal:</b> &lt;120 mmHg<br>\
+                <b>Elevated:</b> 120–129 mmHg<br>\
+                <b>Stage 1 Hypertension:</b> 130–139 mmHg<br>\
+                <b>Stage 2 Hypertension:</b> ≥140 mmHg<br><br>\
+                <b>Clinical Impact:</b><br>\
+                Uncontrolled hypertension increases risk of coronary artery disease, stroke, and heart failure.')">i</span>
+          </label>
+          <input type="range" min="80" max="200" value="130" oninput="updateSlider(this)">
+          <div class="value-bubble">130</div>
+          <div class="range-labels"><span>80</span><span>200</span></div>
+        </div>
+
+        <!-- Cholesterol Slider -->
+        <div class="slider-wrapper">
+          <label>Cholesterol
+            <span class="info-icon"
+              onclick="openModal('Cholesterol',
+                '<b>Definition:</b><br>\
+                Total cholesterol reflects lipid levels circulating in the bloodstream.<br><br>\
+                <b>Pathophysiology:</b><br>\
+                Elevated LDL cholesterol contributes to plaque formation inside arteries, narrowing blood flow to the heart.<br><br>\
+                <b>Reference Ranges:</b><br>\
+                <b>Desirable:</b> &lt;200 mg/dL<br>\
+                <b>Borderline High:</b> 200–239 mg/dL<br>\
+                <b>High:</b> ≥240 mg/dL<br><br>\
+                <b>Clinical Impact:</b><br>\
+                Long-term elevated cholesterol increases risk of heart attack and ischemic heart disease.')">i</span>
+          </label>
+          <input type="range" min="100" max="350" value="220" oninput="updateSlider(this)">
+          <div class="value-bubble">220</div>
+          <div class="range-labels"><span>100</span><span>350</span></div>
+        </div>
+
+        <!-- BMI + Oldpeak side by side -->
+        <div class="two-column">
+          <div>
+            <label>BMI
+              <span class="info-icon"
+                onclick="openModal('Body Mass Index (BMI)',
+                  '<b>Definition:</b><br>\
+                  BMI is calculated as weight (kg) divided by height squared (m²) and estimates body fat levels.<br><br>\
+                  <b>Clinical Significance:</b><br>\
+                  Higher BMI is associated with increased cardiac workload, insulin resistance, hypertension, and abnormal lipid levels.<br><br>\
+                  <b>Classification:</b><br>\
+                  <b>Normal:</b> 18.5–24.9<br>\
+                  <b>Overweight:</b> 25–29.9<br>\
+                  <b>Obesity:</b> ≥30<br><br>\
+                  <b>Clinical Impact:</b><br>\
+                  Maintaining a healthy BMI reduces long-term cardiovascular strain.')">i</span>
+            </label>
+            <div class="number-input">
+              <button onclick="changeBMI(-0.1)">−</button>
+              <input type="number" id="bmiInput" min="15" max="45" step="0.1" value="25.0">
+              <button onclick="changeBMI(0.1)">+</button>
+            </div>
+          </div>
+
+          <div>
+            <label>Oldpeak
+              <span class="info-icon"
+                onclick="openModal('Oldpeak (ST Depression)',
+                  '<b>Definition:</b><br>\
+                  Oldpeak represents ST-segment depression during exercise stress testing.<br><br>\
+                  <b>Clinical Significance:</b><br>\
+                  It reflects how the heart responds to increased oxygen demand during physical stress.<br><br>\
+                  <b>Interpretation:</b><br>\
+                  <b>0.0:</b> Normal response<br>\
+                  <b>0.1–1.9:</b> Mild abnormality<br>\
+                  <b>≥2.0:</b> Significant ischemic response<br><br>\
+                  <b>Clinical Impact:</b><br>\
+                  Higher values suggest reduced blood flow to the heart muscle during exertion.')">i</span>
+            </label>
+            <div class="number-input">
+              <button onclick="changeOldpeak(-0.1)">−</button>
+              <input type="number" id="oldpeakInput" min="0" max="6" step="0.1" value="1.0">
+              <button onclick="changeOldpeak(0.1)">+</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Major Vessels -->
+        <label>Number of Major Vessels
+          <span class="info-icon"
+            onclick="openModal('Major Vessels',
+              '<b>Definition:</b><br>\
+              Represents the number of major coronary arteries with significant narrowing.<br><br>\
+              <b>Clinical Significance:</b><br>\
+              Greater vessel involvement indicates a higher burden of coronary artery disease.<br><br>\
+              <b>Classification:</b><br>\
+              <b>0:</b> No significant blockage<br>\
+              <b>1–3:</b> Increasing severity of arterial obstruction<br><br>\
+              <b>Clinical Impact:</b><br>\
+              Multiple blocked vessels are associated with higher risk of heart attack and heart failure.')">i</span>
+        </label>
+        <div class="segmented" id="vesselsGroup">
+          <button onclick="selectSegment(this, 'vesselsGroup')">0</button>
+          <button onclick="selectSegment(this, 'vesselsGroup')">1</button>
+          <button onclick="selectSegment(this, 'vesselsGroup')">2</button>
+          <button onclick="selectSegment(this, 'vesselsGroup')">3</button>
+        </div>
+      </div><!-- /step2 -->
+
+
+      <!-- ── STEP 3 – Clinical Indicators ── -->
+      <div class="step" id="step3">
+        <h2>Clinical Indicators</h2>
+
+        <!-- Fasting Blood Sugar Toggle -->
+        <label>Fasting Blood Sugar &gt;120 mg/dL
+          <span class="info-icon"
+            onclick="openModal('Fasting Blood Sugar',
+              '<b>Definition:</b><br>\
+              Measures blood glucose levels after at least 8 hours without food.<br><br>\
+              <b>Pathophysiology:</b><br>\
+              Chronic elevation damages blood vessels and accelerates plaque formation.<br><br>\
+              <b>Reference Range:</b><br>\
+              <b>No:</b> ≤120 mg/dL<br>\
+              <b>Yes:</b> &gt;120 mg/dL<br><br>\
+              <b>Clinical Impact:</b><br>\
+              Persistent high blood sugar increases long-term cardiovascular risk.')">i</span>
+        </label>
+        <div class="toggle" id="fbsToggle" onclick="this.classList.toggle('active')"></div>
+
+        <!-- Exercise Induced Angina Toggle -->
+        <label>Exercise Induced Angina
+          <span class="info-icon"
+            onclick="openModal('Exercise Induced Angina',
+              '<b>Definition:</b><br>\
+              Chest discomfort occurring during physical activity.<br><br>\
+              <b>Clinical Significance:</b><br>\
+              Exercise increases oxygen demand of the heart. If arteries are narrowed, blood supply may become insufficient.<br><br>\
+              <b>Clinical Impact:</b><br>\
+              Presence of exercise-induced angina strongly suggests underlying coronary artery disease.')">i</span>
+        </label>
+        <div class="toggle" id="exangToggle" onclick="this.classList.toggle('active')"></div>
+
+        <!-- Diabetes Toggle -->
+        <label>Diabetes
+          <span class="info-icon"
+            onclick="openModal('Diabetes',
+              '<b>Definition:</b><br>\
+              A metabolic disorder characterized by chronically elevated blood glucose levels.<br><br>\
+              <b>Pathophysiology:</b><br>\
+              Diabetes accelerates blood vessel damage, arterial stiffening, and plaque formation.<br><br>\
+              <b>Clinical Impact:</b><br>\
+              Patients with diabetes have significantly increased risk of cardiovascular disease and heart failure.')">i</span>
+        </label>
+        <div class="toggle" id="diabetesToggle" onclick="this.classList.toggle('active')"></div>
+
+        <!-- ST Slope Segmented -->
+        <label>Slope of ST Segment
+          <span class="info-icon"
+            onclick="openModal('Slope of ST Segment',
+              '<b>Definition:</b><br>\
+              Describes the pattern of the ST segment during exercise testing.<br><br>\
+              <b>Interpretation:</b><br>\
+              <b>Upsloping:</b> Generally normal response<br>\
+              <b>Flat:</b> Possible ischemic concern<br>\
+              <b>Downsloping:</b> Strongly associated with coronary artery disease<br><br>\
+              <b>Clinical Impact:</b><br>\
+              Abnormal ST slope patterns indicate impaired blood flow during cardiac stress.')">i</span>
+        </label>
+        <div class="segmented" id="slopeGroup">
+          <button onclick="selectSegment(this, 'slopeGroup')">Upsloping</button>
+          <button onclick="selectSegment(this, 'slopeGroup')">Flat</button>
+          <button onclick="selectSegment(this, 'slopeGroup')">Downsloping</button>
+        </div>
+      </div><!-- /step3 -->
+
+
+      <!-- ── STEP 4 – Diagnostic Categories ── -->
+      <div class="step" id="step4">
+        <h2>Diagnostic Categories</h2>
+
+        <!-- Chest Pain Type Cards -->
+        <label>Chest Pain Type
+          <span class="info-icon"
+            onclick="openModal('Chest Pain Type',
+              '<b>Definition:</b><br>\
+              Clinical classification of chest discomfort based on symptom characteristics.<br><br>\
+              <b>Categories:</b><br>\
+              <b>Typical Angina:</b> Chest discomfort triggered by exertion and relieved by rest; highly suggestive of coronary artery disease.<br><br>\
+              <b>Atypical Angina:</b> Meets some but not all typical criteria; intermediate probability.<br><br>\
+              <b>Non-anginal Pain:</b> Unlikely to be cardiac in origin.<br><br>\
+              <b>Asymptomatic:</b> No chest pain despite possible underlying disease.<br><br>\
+              <b>Clinical Impact:</b><br>\
+              Chest pain type significantly influences cardiovascular risk estimation.')">i</span>
+        </label>
+        <div class="option-card-group" id="cpGroup">
+          <div class="option-card" onclick="selectCard(this, 'cpGroup')">Typical</div>
+          <div class="option-card" onclick="selectCard(this, 'cpGroup')">Atypical</div>
+          <div class="option-card" onclick="selectCard(this, 'cpGroup')">Non-anginal</div>
+          <div class="option-card" onclick="selectCard(this, 'cpGroup')">Asymptomatic</div>
+        </div>
+
+        <!-- Rest ECG Segmented -->
+        <label>Rest ECG
+          <span class="info-icon"
+            onclick="openModal('Rest ECG',
+              '<b>Definition:</b><br>\
+              Resting electrocardiogram evaluates the heart\'s electrical activity at baseline.<br><br>\
+              <b>Interpretation:</b><br>\
+              <b>Normal:</b> No significant electrical abnormalities<br>\
+              <b>ST-T Abnormality:</b> May indicate reduced blood flow<br>\
+              <b>Left Ventricular Hypertrophy:</b> Suggests chronic pressure overload<br><br>\
+              <b>Clinical Impact:</b><br>\
+              Abnormal ECG findings are associated with increased cardiovascular risk.')">i</span>
+        </label>
+        <div class="segmented" id="ecgGroup">
+          <button onclick="selectSegment(this, 'ecgGroup')">Normal</button>
+          <button onclick="selectSegment(this, 'ecgGroup')">ST-T Abnormality</button>
+          <button onclick="selectSegment(this, 'ecgGroup')">LV Hypertrophy</button>
+        </div>
+
+        <!-- Thalassemia Segmented -->
+        <label>Thalassemia
+          <span class="info-icon"
+            onclick="openModal('Thalassemia (Perfusion Status)',
+              '<b>Definition:</b><br>\
+              Represents myocardial perfusion findings during stress testing.<br><br>\
+              <b>Clinical Interpretation:</b><br>\
+              <b>Normal:</b> Uniform blood flow<br>\
+              <b>Fixed Defect:</b> Permanent damage from prior infarction<br>\
+              <b>Reversible Defect:</b> Temporary reduced flow during stress<br><br>\
+              <b>Clinical Impact:</b><br>\
+              Perfusion defects help determine severity and presence of coronary artery disease.')">i</span>
+        </label>
+        <div class="segmented" id="thalGroup">
+          <button onclick="selectSegment(this, 'thalGroup')">Normal</button>
+          <button onclick="selectSegment(this, 'thalGroup')">Fixed Defect</button>
+          <button onclick="selectSegment(this, 'thalGroup')">Reversible Defect</button>
+        </div>
+      </div><!-- /step4 -->
+
+      <!-- Navigation Buttons -->
+      <div class="nav">
+        <button class="glow-btn" onclick="prevStep()">Back</button>
+        <button class="glow-btn" id="nextBtn" onclick="nextStep()">Next</button>
+      </div>
+
+    </div><!-- /card -->
+  </div><!-- /assessmentScreen -->
+
+
+  <!-- ═══════════════════════════════════════
+       SCREEN 3 – REPORT
+  ════════════════════════════════════════ -->
+  <div id="reportScreen" class="screen">
+    <div class="card" style="width: 1000px; max-height: 85vh; overflow-y: auto;">
+
+      <!-- Header -->
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+        <div>
+          <h1 style="margin: 0; font-size: 32px;">HeartWell</h1>
+          <div style="opacity: 0.7; font-size: 14px;">AI-Based Cardiovascular Risk Analysis Report</div>
+        </div>
+        <div style="text-align: right;">
+          <div id="reportDate" style="font-size: 14px; opacity: 0.8;"></div>
+          <div id="reportTime" style="font-size: 14px; opacity: 0.8;"></div>
+        </div>
+      </div>
+
+      <hr style="border: 1px solid rgba(255,255,255,0.08); margin-bottom: 30px;">
+
+      <!-- Risk Summary -->
+      <div id="riskSummarySection" style="margin-bottom: 40px;">
+        <h2>Risk Summary</h2>
+        <div id="reportRiskScore" style="font-size: 48px; margin: 15px 0;"></div>
+        <div id="reportRiskLabel"  style="font-size: 18px; margin-bottom: 10px;"></div>
+        <div id="reportRiskExplanation" style="opacity: 0.85; line-height: 1.6;"></div>
+      </div>
+
+      <!-- Clinical Findings -->
+      <div id="abnormalSection" style="margin-bottom: 40px;">
+        <h2>Clinical Findings</h2>
+        <div id="abnormalContainer" style="margin-top: 20px;"></div>
+      </div>
+
+      <!-- Chart -->
+      <div id="chartSection" style="margin-bottom: 40px;">
+        <h2>Risk Breakdown Analysis</h2>
+        <div style="height: 350px; display: flex; justify-content: center;">
+          <canvas id="riskChart"></canvas>
+        </div>
+      </div>
+
+      <!-- Action Plan -->
+      <div id="actionPlanSection" style="margin-bottom: 40px;">
+        <h2>Personalized Action Plan</h2>
+        <div style="margin-top: 15px;">
+          <h3>Immediate (0–1 Month)</h3>
+          <ul id="immediatePlan"></ul>
+        </div>
+        <div style="margin-top: 20px;">
+          <h3>Short-Term (1–6 Months)</h3>
+          <ul id="shortPlan"></ul>
+        </div>
+        <div style="margin-top: 20px;">
+          <h3>Long-Term Maintenance</h3>
+          <ul id="longPlan"></ul>
+        </div>
+      </div>
+
+      <!-- Monitoring Schedule -->
+      <div id="monitoringSection" style="margin-bottom: 40px;">
+        <h2>Recommended Monitoring Schedule</h2>
+        <ul id="monitoringList" style="margin-top: 15px;"></ul>
+      </div>
+
+      <!-- Disclaimer -->
+      <div style="opacity: 0.6; font-size: 13px; line-height: 1.6; margin-top: 30px;">
+        This report is generated using an AI-based clinical decision support system.
+        It is intended for cardiovascular risk awareness and does not replace professional medical diagnosis.
+      </div>
+
+      <!-- Report Buttons -->
+      <div style="display: flex; justify-content: space-between; margin-top: 40px;">
+        <button class="glow-btn" onclick="goBackToAssessment()">Back</button>
+        <button class="glow-btn" onclick="generatePDF()">Download Medical Report</button>
+      </div>
+
+    </div><!-- /report card -->
+  </div><!-- /reportScreen -->
+
+
+  <!-- ═══════════════════════════════════════
+       RISK OVERLAY  (sits at body level)
+  ════════════════════════════════════════ -->
+  <div class="risk-overlay" id="riskOverlay">
+    <div class="risk-panel">
+      <h2 id="riskTitle">Cardiovascular Risk Assessment</h2>
+      <div class="risk-score" id="riskScore">0%</div>
+      <div class="risk-label" id="riskLabel">Calculating…</div>
+      <button class="glow-btn" onclick="closeRiskOverlay()">View Full Report</button>
+    </div>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════
+       INFO MODAL  (sits at body level)
+  ════════════════════════════════════════ -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal">
+      <h3 id="modalTitle"></h3>
+      <p  id="modalContent"></p>
+      <button class="glow-btn" onclick="closeModal()">Close</button>
+    </div>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════
+       JAVASCRIPT
+  ════════════════════════════════════════ -->
+  <script>
+    /* ── State ── */
+    let currentStep = 1;
+    let riskChartInstance = null;
+
+    /* ════════════════════════════════════════
+       Screen Navigation
+    ════════════════════════════════════════ */
+    function startAssessment() {
+      document.getElementById('heroScreen').classList.remove('active');
+      document.getElementById('assessmentScreen').classList.add('active');
+    }
+
+    
+    function openReportScreen() {
+      document.getElementById('assessmentScreen').classList.remove('active');
+      document.getElementById('reportScreen').classList.add('active');
+      document.querySelector('.data-vidwan-logo').style.display = 'none';
+    }
+    
+    function goBackToAssessment() {
+      document.getElementById('reportScreen').classList.remove('active');
+      document.getElementById('assessmentScreen').classList.add('active');
+      document.querySelector('.data-vidwan-logo').style.display = 'block';
+    }
+
+    /* ════════════════════════════════════════
+       Step Navigation
+    ════════════════════════════════════════ */
+    function nextStep() {
+      if (!validateCurrentStep()) return;
+
+      if (currentStep < 4) {
+        document.getElementById('step' + currentStep).classList.remove('active');
+        currentStep++;
+        document.getElementById('step' + currentStep).classList.add('active');
+        document.getElementById('progressBar').style.width = (currentStep * 25) + '%';
+      }
+
+      const btn = document.getElementById('nextBtn');
+      if (currentStep === 4) {
+        btn.innerText = 'Analyze Risk';
+        btn.onclick   = showRiskOverlay;
+      } else {
+        btn.innerText = 'Next';
+        btn.onclick   = nextStep;
+      }
+    }
+
+    function prevStep() {
+      if (currentStep > 1) {
+        document.getElementById('step' + currentStep).classList.remove('active');
+        currentStep--;
+        document.getElementById('step' + currentStep).classList.add('active');
+        document.getElementById('progressBar').style.width = (currentStep * 25) + '%';
+      }
+
+      const btn = document.getElementById('nextBtn');
+      if (currentStep < 4) {
+        btn.innerText = 'Next';
+        btn.onclick   = nextStep;
+      }
+    }
+
+    /* ════════════════════════════════════════
+       Info Modal
+    ════════════════════════════════════════ */
+    function openModal(title, content) {
+      document.getElementById('modalTitle').innerText   = title;
+      document.getElementById('modalContent').innerHTML = content;
+      document.getElementById('modalOverlay').style.display = 'flex';
+    }
+
+    function closeModal() {
+      document.getElementById('modalOverlay').style.display = 'none';
+    }
+
+    /* ════════════════════════════════════════
+       Slider
+    ════════════════════════════════════════ */
+    function updateSlider(slider) {
+      const bubble  = slider.nextElementSibling;
+      const percent = ((slider.value - slider.min) / (slider.max - slider.min)) * 100;
+
+      bubble.innerHTML  = slider.value;
+      bubble.style.left = percent + '%';
+      slider.style.background =
+        'linear-gradient(to right, #b76e79 ' + percent + '%, #3a3442 ' + percent + '%)';
+    }
+
+    /* Initialise sliders on page load */
+    document.querySelectorAll('input[type="range"]').forEach(s => updateSlider(s));
+
+    /* ════════════════════════════════════════
+       Segmented Controls & Option Cards
+    ════════════════════════════════════════ */
+    function selectSegment(btn, groupId) {
+      document.querySelectorAll('#' + groupId + ' button')
+              .forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    }
+
+    function selectCard(card, groupId) {
+      document.querySelectorAll('#' + groupId + ' .option-card')
+              .forEach(c => c.classList.remove('active'));
+      card.classList.add('active');
+    }
+
+    /* ════════════════════════════════════════
+       Number Inputs – BMI & Oldpeak
+    ════════════════════════════════════════ */
+    function validateBMI() {
+      const input = document.getElementById('bmiInput');
+      let value   = parseFloat(input.value);
+
+      if (isNaN(value))  { alert('Please enter a valid BMI value.');             value = 25;  }
+      else if (value < 15) { alert('BMI cannot be less than 15.');               value = 15;  }
+      else if (value > 45) { alert('BMI cannot exceed 45.');                     value = 45;  }
+
+      input.value = value.toFixed(1);
+    }
+
+    function validateOldpeak() {
+      const input = document.getElementById('oldpeakInput');
+      let value   = parseFloat(input.value);
+
+      if (isNaN(value))  { alert('Please enter a valid Oldpeak value.');         value = 1.0; }
+      else if (value < 0) { alert('Oldpeak cannot be less than 0.');             value = 0;   }
+      else if (value > 6) { alert('Oldpeak cannot exceed 6.');                   value = 6;   }
+
+      input.value = value.toFixed(1);
+    }
+
+    function changeBMI(delta) {
+      const input = document.getElementById('bmiInput');
+      input.value = (parseFloat(input.value) + delta).toFixed(1);
+      validateBMI();
+    }
+
+    function changeOldpeak(delta) {
+      const input = document.getElementById('oldpeakInput');
+      input.value = (parseFloat(input.value) + delta).toFixed(1);
+      validateOldpeak();
+    }
+
+    document.getElementById('bmiInput').addEventListener('blur', validateBMI);
+    document.getElementById('oldpeakInput').addEventListener('blur', validateOldpeak);
+
+    /* ════════════════════════════════════════
+       Step Validation
+    ════════════════════════════════════════ */
+    function validateCurrentStep() {
+      let isValid = true;
+
+      /* Clear previous errors */
+      document.querySelectorAll('.validation-error').forEach(el => el.classList.remove('validation-error'));
+      document.querySelectorAll('.validation-text').forEach(el => el.remove());
+
+      function markInvalid(groupId) {
+        const group = document.getElementById(groupId);
+        group.classList.add('validation-error');
+
+        const errorText       = document.createElement('div');
+        errorText.className   = 'validation-text';
+        errorText.innerText   = 'Selection required to proceed.';
+        group.appendChild(errorText);
+        group.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+        isValid = false;
+      }
+
+      if (currentStep === 2 && !document.querySelector('#vesselsGroup .active')) {
+        markInvalid('vesselsGroup');
+      }
+
+      if (currentStep === 3 && !document.querySelector('#slopeGroup .active')) {
+        markInvalid('slopeGroup');
+      }
+
+      if (currentStep === 4) {
+        if (!document.querySelector('#cpGroup  .active')) markInvalid('cpGroup');
+        if (!document.querySelector('#ecgGroup .active')) markInvalid('ecgGroup');
+        if (!document.querySelector('#thalGroup .active')) markInvalid('thalGroup');
+      }
+
+      return isValid;
+    }
+
+    /* ════════════════════════════════════════
+       Collect Form Values
+    ════════════════════════════════════════ */
+    function collectValues() {
+      const age      = parseInt(document.querySelector('#step1 input[type="range"]').value);
+      const sex      = document.getElementById('sexSelect').value === 'Male' ? 1 : 0;
+      const smoking  = document.getElementById('smokingSelect').value.toLowerCase();
+
+      const bpSliders = document.querySelectorAll('#step2 input[type="range"]');
+      const trestbps  = parseInt(bpSliders[0].value);
+      const chol      = parseInt(bpSliders[1].value);
+
+      const bmi       = parseFloat(document.getElementById('bmiInput').value);
+      const oldpeak   = parseFloat(document.getElementById('oldpeakInput').value);
+
+      const vesselsBtn = document.querySelector('#vesselsGroup .active');
+      const vessels    = vesselsBtn ? parseInt(vesselsBtn.innerText) : 0;
+
+      const fbs      = document.getElementById('fbsToggle').classList.contains('active')      ? 1 : 0;
+      const exang    = document.getElementById('exangToggle').classList.contains('active')    ? 1 : 0;
+      const diabetes = document.getElementById('diabetesToggle').classList.contains('active') ? 1 : 0;
+
+      const slope = (document.querySelector('#slopeGroup .active')  || {}).innerText || 'Upsloping';
+      const cp    = (document.querySelector('#cpGroup .active')     || {}).innerText || 'Typical';
+      const ecg   = (document.querySelector('#ecgGroup .active')    || {}).innerText || 'Normal';
+      const thal  = (document.querySelector('#thalGroup .active')   || {}).innerText || 'Normal';
+
+      return { age, sex, smoking, trestbps, chol, bmi, oldpeak, vessels, fbs, exang, diabetes, slope, cp, ecg, thal };
+    }
+
+    /* ════════════════════════════════════════
+       Risk Overlay + Backend Call
+    ════════════════════════════════════════ */
+    function showRiskOverlay() {
+      if (!validateCurrentStep()) return;
+      validateBMI();
+      validateOldpeak();
+
+      const v = collectValues();
+
+      const analyzeBtn      = document.getElementById('nextBtn');
+      analyzeBtn.innerText  = 'Analyzing…';
+      analyzeBtn.disabled   = true;
+
+      fetch('http://127.0.0.1:8000/predict', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({
+          age:                v.age,
+          sex:                v.sex === 1 ? 'male' : 'female',
+          bmi:                v.bmi,
+          resting_bp:         v.trestbps,
+          cholesterol:        v.chol,
+          oldpeak:            v.oldpeak,
+          fasting_blood_sugar: v.fbs      === 1 ? 'yes' : 'no',
+          exercise_angina:     v.exang    === 1 ? 'yes' : 'no',
+          diabetes:            v.diabetes === 1 ? 'yes' : 'no',
+          num_major_vessels:   v.vessels.toString(),
+          chest_pain_type:     v.cp.toLowerCase(),
+          rest_ecg:            v.ecg.toLowerCase(),
+          slope:               v.slope.toLowerCase(),
+          thalassemia:         v.thal.toLowerCase(),
+          smoking_status:      v.smoking.toLowerCase()
+        })
+      })
+      .then(res => res.json())
+      .then(data => {
+        analyzeBtn.innerText = 'Analyze Risk';
+        analyzeBtn.disabled  = false;
+
+        const riskPct = data.risk_percentage;
+
+        document.getElementById('riskOverlay').style.display = 'flex';
+        document.querySelector('.data-vidwan-logo').style.display = 'none';
+        animateRiskOverlay(riskPct);
+
+        /* Populate the full report in the background */
+        populateReport(v, riskPct);
+      })
+      .catch(err => {
+        console.error(err);
+        alert('Backend connection failed. Please ensure the server is running on http://127.0.0.1:8000');
+        analyzeBtn.innerText = 'Analyze Risk';
+        analyzeBtn.disabled  = false;
+      });
+    }
+
+    /* ════════════════════════════════════════
+       Risk Overlay Animation
+    ════════════════════════════════════════ */
+    function animateRiskOverlay(target) {
+      let current  = 0;
+      const scoreEl = document.getElementById('riskScore');
+      const labelEl = document.getElementById('riskLabel');
+      const stepVal = target / 60;
+
+      const interval = setInterval(() => {
+        current += stepVal;
+        if (current >= target) {
+          current = target;
+          clearInterval(interval);
+
+          /* Colour and label after animation finishes */
+          if (target < 30) {
+            scoreEl.style.color = '#6fcf97';
+            labelEl.innerText   = 'Low Risk';
+          } else if (target < 60) {
+            scoreEl.style.color = '#f2c94c';
+            labelEl.innerText   = 'Moderate Risk';
+          } else {
+            scoreEl.style.color = '#eb5757';
+            labelEl.innerText   = 'High Risk';
+          }
+        }
+        scoreEl.innerText = current.toFixed(1) + '%';
+      }, 16);
+    }
+
+    function closeRiskOverlay() {
+      document.getElementById('riskOverlay').style.display = 'none';
+      openReportScreen();
+    }
+
+    /* ════════════════════════════════════════
+       Populate Full Report
+    ════════════════════════════════════════ */
+    function populateReport(v, riskPct) {
+      /* Date / Time */
+      const now = new Date();
+      document.getElementById('reportDate').innerText =
+        now.toLocaleDateString('en-GB', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+      document.getElementById('reportTime').innerText =
+        now.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+
+      /* Risk Score & Label */
+      const scoreEl = document.getElementById('reportRiskScore');
+      const labelEl = document.getElementById('reportRiskLabel');
+      const expl    = document.getElementById('reportRiskExplanation');
+
+      scoreEl.innerText = riskPct.toFixed(1) + '%';
+
+      let riskCategory, colour, explanation;
+      if (riskPct < 30) {
+        riskCategory  = 'Low Risk';
+        colour        = '#6fcf97';
+        explanation   = 'Your cardiovascular risk profile is currently within a low-risk range. Continue maintaining a healthy lifestyle with regular physical activity, balanced nutrition, and routine check-ups to sustain this favourable outcome.';
+      } else if (riskPct < 60) {
+        riskCategory  = 'Moderate Risk';
+        colour        = '#f2c94c';
+        explanation   = 'Several clinical indicators suggest a moderate level of cardiovascular risk. Lifestyle modifications and medical consultation are strongly recommended to address the identified risk factors before they progress.';
+      } else {
+        riskCategory  = 'High Risk';
+        colour        = '#eb5757';
+        explanation   = 'Your clinical profile indicates an elevated cardiovascular risk. Immediate medical attention and a comprehensive cardiac evaluation are advised. Early intervention significantly improves long-term outcomes.';
+      }
+
+      scoreEl.style.color   = colour;
+      labelEl.innerText     = riskCategory;
+      labelEl.style.color   = colour;
+      expl.innerText        = explanation;
+
+      /* Clinical Findings */
+      const findings = [];
+      if (v.trestbps >= 140) findings.push({ label: 'Hypertension (Stage 2)', detail: `Blood pressure of ${v.trestbps} mmHg exceeds the Stage 2 hypertension threshold. This significantly elevates cardiac workload.` });
+      else if (v.trestbps >= 130) findings.push({ label: 'Elevated Blood Pressure (Stage 1)', detail: `Blood pressure of ${v.trestbps} mmHg falls within the Stage 1 hypertension range.` });
+
+      if (v.chol >= 240) findings.push({ label: 'High Cholesterol', detail: `Total cholesterol of ${v.chol} mg/dL is above the high-risk threshold of 240 mg/dL.` });
+      else if (v.chol >= 200) findings.push({ label: 'Borderline High Cholesterol', detail: `Cholesterol of ${v.chol} mg/dL is in the borderline-high range (200–239 mg/dL).` });
+
+      if (v.bmi >= 30) findings.push({ label: 'Obesity', detail: `BMI of ${v.bmi.toFixed(1)} indicates obesity, increasing cardiovascular strain.` });
+      else if (v.bmi >= 25) findings.push({ label: 'Overweight', detail: `BMI of ${v.bmi.toFixed(1)} indicates overweight status.` });
+
+      if (v.oldpeak >= 2.0) findings.push({ label: 'Significant ST Depression', detail: `Oldpeak of ${v.oldpeak.toFixed(1)} indicates a significant ischemic response during stress testing.` });
+      else if (v.oldpeak > 0) findings.push({ label: 'Mild ST Depression', detail: `Oldpeak of ${v.oldpeak.toFixed(1)} reflects a mild abnormality during exercise stress testing.` });
+
+      if (v.fbs === 1)      findings.push({ label: 'Elevated Fasting Blood Sugar', detail: 'Fasting blood sugar exceeds 120 mg/dL, indicating possible impaired glucose regulation.' });
+      if (v.diabetes === 1) findings.push({ label: 'Diabetes Mellitus', detail: 'Diabetes accelerates vascular damage and significantly increases cardiovascular risk.' });
+      if (v.exang === 1)    findings.push({ label: 'Exercise-Induced Angina', detail: 'Chest discomfort during exertion strongly suggests underlying coronary artery disease.' });
+      if (v.vessels > 0)    findings.push({ label: `${v.vessels} Major Vessel(s) Affected`, detail: `${v.vessels} major coronary artery vessel(s) show significant narrowing.` });
+      if (v.smoking === 'current') findings.push({ label: 'Active Smoker', detail: 'Current tobacco use significantly elevates cardiovascular risk.' });
+      if (v.slope.toLowerCase() === 'downsloping') findings.push({ label: 'Downsloping ST Segment', detail: 'A downsloping ST segment is strongly associated with coronary artery disease.' });
+      if (v.thal.toLowerCase() === 'reversible defect') findings.push({ label: 'Reversible Perfusion Defect', detail: 'A reversible defect on stress testing suggests inducible myocardial ischemia.' });
+      else if (v.thal.toLowerCase() === 'fixed defect') findings.push({ label: 'Fixed Perfusion Defect', detail: 'A fixed perfusion defect may indicate prior myocardial infarction.' });
+
+      const container = document.getElementById('abnormalContainer');
+      container.innerHTML = '';
+
+      if (findings.length === 0) {
+        container.innerHTML = '<p style="color:#6fcf97;">No significant abnormal clinical findings detected based on the provided parameters.</p>';
+      } else {
+        findings.forEach(f => {
+          const item = document.createElement('div');
+          item.style.cssText = 'background:#3a3442; border-radius:12px; padding:14px 18px; margin-bottom:12px; border-left:4px solid var(--blush);';
+          item.innerHTML = `<strong>${f.label}</strong><p style="opacity:0.8; margin:6px 0 0; font-size:14px; line-height:1.5;">${f.detail}</p>`;
+          container.appendChild(item);
+        });
+      }
+
+      /* Risk Breakdown Chart */
+      buildRiskChart(v, riskPct);
+
+      /* Action Plan */
+      const immediate = [];
+      const shortTerm = [];
+      const longTerm  = [];
+
+      if (v.trestbps >= 130) {
+        immediate.push('Monitor blood pressure daily with a home sphygmomanometer.');
+        shortTerm.push('Consult a cardiologist or internist for antihypertensive evaluation.');
+        longTerm.push('Maintain blood pressure below 120/80 mmHg through lifestyle and medication.');
+      }
+      if (v.chol >= 200) {
+        immediate.push('Reduce intake of saturated fats, trans fats, and processed foods.');
+        shortTerm.push('Request a full lipid panel (LDL, HDL, triglycerides) from your physician.');
+        longTerm.push('Maintain total cholesterol below 200 mg/dL through diet and statin therapy if indicated.');
+      }
+      if (v.bmi >= 25) {
+        immediate.push('Begin a daily 30-minute moderate-intensity exercise routine.');
+        shortTerm.push('Consult a nutritionist for a personalised weight management plan.');
+        longTerm.push('Achieve and sustain a BMI within the 18.5–24.9 range.');
+      }
+      if (v.smoking === 'current') {
+        immediate.push('Contact a smoking cessation programme or healthcare provider immediately.');
+        shortTerm.push('Use pharmacological support (nicotine replacement, varenicline) if needed.');
+        longTerm.push('Remain smoke-free; cardiovascular risk halves within 1–2 years of quitting.');
+      }
+      if (v.diabetes === 1 || v.fbs === 1) {
+        immediate.push('Monitor fasting blood glucose daily.');
+        shortTerm.push('Consult an endocrinologist for diabetes management optimisation.');
+        longTerm.push('Maintain HbA1c below 7% to minimise vascular complications.');
+      }
+
+      /* Defaults if no specific factors */
+      if (immediate.length === 0) immediate.push('Schedule a routine cardiovascular check-up with your primary care physician.');
+      if (shortTerm.length === 0)  shortTerm.push('Maintain current lifestyle habits and repeat risk assessment in 12 months.');
+      if (longTerm.length === 0)   longTerm.push('Continue regular physical activity, healthy diet, and annual cardiac screening.');
+
+      fillList('immediatePlan', immediate);
+      fillList('shortPlan',     shortTerm);
+      fillList('longPlan',      longTerm);
+
+      /* Monitoring Schedule */
+      const monitoring = [
+        'Blood pressure: Every day for the next 30 days; then weekly.',
+        'Cholesterol panel: Every 6 months.',
+        'BMI and weight: Monthly.',
+        'Fasting blood glucose: Every 3 months if elevated.',
+        'Resting ECG: Annually or as directed by your cardiologist.',
+        'Exercise stress test: Annually if risk is moderate or high.',
+        'Full cardiovascular review with physician: Every 6 months.'
+      ];
+      fillList('monitoringList', monitoring);
+    }
+
+    function fillList(listId, items) {
+      const ul = document.getElementById(listId);
+      ul.innerHTML = '';
+      items.forEach(item => {
+        const li = document.createElement('li');
+        li.style.cssText    = 'margin-bottom: 8px; line-height: 1.5;';
+        li.innerText        = item;
+        ul.appendChild(li);
+      });
+    }
+
+    /* ════════════════════════════════════════
+       Risk Breakdown Radar Chart
+    ════════════════════════════════════════ */
+    function buildRiskChart(v, riskPct) {
+      const ctx = document.getElementById('riskChart').getContext('2d');
+
+      /* Destroy previous instance to avoid canvas reuse error */
+      if (riskChartInstance) {
+        riskChartInstance.destroy();
+        riskChartInstance = null;
+      }
+
+      /* Normalise each factor to a 0–100 score */
+      const bpScore       = Math.min(100, Math.max(0, ((v.trestbps - 80) / 120) * 100));
+      const cholScore     = Math.min(100, Math.max(0, ((v.chol - 100)    / 250) * 100));
+      const bmiScore      = Math.min(100, Math.max(0, ((v.bmi - 15)      / 30)  * 100));
+      const oldpeakScore  = Math.min(100, Math.max(0, (v.oldpeak          / 6)   * 100));
+      const vesselScore   = Math.min(100, (v.vessels / 3) * 100);
+      const lifestyleScore = Math.min(100,
+        ((v.fbs + v.exang + v.diabetes) * 20) +
+        (v.smoking === 'current' ? 40 : v.smoking === 'former' ? 15 : 0));
+
+      riskChartInstance = new Chart(ctx, {
+        type: 'radar',
+        data: {
+          labels: ['Blood Pressure', 'Cholesterol', 'BMI', 'ST Depression', 'Vessel Disease', 'Lifestyle Factors'],
+          datasets: [{
+            label:           'Risk Contribution (%)',
+            data:            [bpScore, cholScore, bmiScore, oldpeakScore, vesselScore, lifestyleScore],
+            backgroundColor: 'rgba(183, 110, 121, 0.25)',
+            borderColor:     '#b76e79',
+            borderWidth:     2,
+            pointBackgroundColor: '#b76e79'
+          }]
+        },
+        options: {
+          responsive:          true,
+          maintainAspectRatio: true,
+          scales: {
+            r: {
+              min:        0,
+              max:        100,
+              ticks:      { display: false },
+              grid:       { color: 'rgba(255,255,255,0.08)' },
+              angleLines: { color: 'rgba(255,255,255,0.08)' },
+              pointLabels: {
+                color:    '#f4eef2',
+                font:     { size: 13 }
+              }
+            }
+          },
+          plugins: {
+            legend: { labels: { color: '#f4eef2' } }
+          }
+        }
+      });
+    }
+
+
+  function buildCleanFindings() {
+
+  const container = document.getElementById('abnormalContainer');
+  const items = container.querySelectorAll('div');
+
+  if (items.length === 0) {
+    return "<p>No significant abnormal clinical findings detected.</p>";
+  }
+
+  let html = `
+    <table style="width:100%; border-collapse:collapse; margin-top:10px;">
+      <tr>
+        <th style="border:1px solid #000; padding:6px;">Finding</th>
+        <th style="border:1px solid #000; padding:6px;">Clinical Interpretation</th>
+      </tr>
+  `;
+
+  items.forEach(item => {
+    const title = item.querySelector('strong')?.innerText || '';
+    const detail = item.querySelector('p')?.innerText || '';
+
+    html += `
+      <tr>
+        <td style="border:1px solid #000; padding:6px;">
+          <strong>${title}</strong>
+        </td>
+        <td style="border:1px solid #000; padding:6px;">
+          ${detail}
+        </td>
+      </tr>
+    `;
+  });
+
+  html += "</table>";
+
+  return html;
+}
+
+    /* ════════════════════════════════════════
+       PDF Download  (print-to-PDF fallback)
+    ════════════════════════════════════════ */
+  function generatePDF() {
+
+  const values = collectValues();
+  const riskScore = document.getElementById('reportRiskScore').innerText;
+  const riskLabel = document.getElementById('reportRiskLabel').innerText;
+
+  const now = new Date();
+  const reportDate = now.toLocaleDateString();
+  const reportTime = now.toLocaleTimeString();
+
+  function abnormal(condition, value) {
+    return condition ? `<span class="abnormal">${value}</span>` : value;
+  }
+
+  const printDiv = document.getElementById("printReport");
+  printDiv.style.display = "block";
+
+  printDiv.innerHTML = `
+
+  <!-- =========================
+       PAGE 1
+  ========================== -->
+  <div class="print-page">
+
+    <div style="text-align:center; margin-bottom:20px;">
+      <div style="font-size:20px; font-weight:700;">REPORT</div>
+      <div style="font-size:14px; margin-top:4px;">
+        AI Based Heart Failure Risk Assessment
+      </div>
+    </div>
+
+    <hr style="border:1px solid #000; margin:20px 0 25px 0;">
+
+    <div style="display:flex; justify-content:space-between; margin:15px 0; font-size:14px;">
+
+  <div>
+    <div><strong>Age:</strong> ${values.age} Years</div>
+    <div><strong>Sex:</strong> ${values.sex === 1 ? "Male" : "Female"}</div>
+    <div><strong>Report Date:</strong> ${reportDate}</div>
+  </div>
+
+  <div style="text-align:right;">
+    <div><strong>Risk Level:</strong> ${riskLabel}</div>
+    <div><strong>Report Time:</strong> ${reportTime}</div>
+    <div><strong>Risk Probability:</strong> ${riskScore}</div>
+  </div>
+
+</div>
+
+    <div style="font-size:14px; line-height:1.8;">
+
+      <div style="display:grid; grid-template-columns:2fr 1fr 1fr; font-weight:600;">
+        <div>TEST / PARAMETER</div>
+        <div>RESULT</div>
+        <div>REFERENCE RANGE</div>
+      </div>
+
+      <hr style="border:1px solid #000; margin:6px 0 12px 0;">
+
+      <div style="display:grid; grid-template-columns:2fr 1fr 1fr;">
+        <div>BMI</div>
+        <div>${values.bmi}</div>
+        <div>18.5 - 24.9</div>
+      </div>
+
+      <div style="display:grid; grid-template-columns:2fr 1fr 1fr; padding:4px 0;">
+        <div>Resting BP</div>
+        <div style="color:${values.trestbps > 120 ? 'red' : 'black'};">
+          ${values.trestbps}
+        </div>
+        <div>90 - 120 mmHg</div>
+      </div>
+
+      <div style="display:grid; grid-template-columns:2fr 1fr 1fr; padding:4px 0;">
+        <div>Cholesterol</div>
+        <div style="color:${values.chol > 200 ? 'red' : 'black'};">
+          ${values.chol}
+        </div>
+        <div>&lt; 200 mg/dL</div>
+      </div>
+
+      <div style="display:grid; grid-template-columns:2fr 1fr 1fr; padding:4px 0;">
+        <div>Oldpeak</div>
+        <div style="color:${values.oldpeak > 1.0 ? 'red' : 'black'};">
+          ${values.oldpeak}
+        </div>
+        <div>0.0 - 1.0</div>
+      </div>
+
+      <div style="display:grid; grid-template-columns:2fr 1fr 1fr; padding:4px 0;">
+        <div>Major Vessels</div>
+        <div style="color:${values.vessels > 0 ? 'red' : 'black'};">
+          ${values.vessels}
+        </div>
+        <div>0</div>
+      </div>
+
+    </div>
+
+    <div style="margin-top:10px; font-weight:700;">
+      Clinical Observations
+    </div>
+
+    <hr style="border:1px solid #000; margin:4px 0 10px 0;">
+
+    <div style="font-size:14px; line-height:1.6;">
+
+  <div style="display:flex; justify-content:space-between; padding:3px 0;">
+    <span>Fasting Blood Sugar</span>
+    <span>: ${values.fbs === 1 ? "Yes" : "No"}</span>
+  </div>
+
+  <div style="display:flex; justify-content:space-between; padding:3px 0;">
+    <span>Exercise Angina</span>
+    <span>: ${values.exang === 1 ? "Yes" : "No"}</span>
+  </div>
+
+  <div style="display:flex; justify-content:space-between; padding:3px 0;">
+    <span>Diabetes</span>
+    <span>: ${values.diabetes === 1 ? "Yes" : "No"}</span>
+  </div>
+
+  <div style="display:flex; justify-content:space-between; padding:3px 0;">
+    <span>Chest Pain Type</span>
+    <span>: ${values.cp}</span>
+  </div>
+
+  <div style="display:flex; justify-content:space-between; padding:3px 0;">
+    <span>Rest ECG</span>
+    <span>: ${values.ecg}</span>
+  </div>
+
+  <div style="display:flex; justify-content:space-between; padding:3px 0;">
+    <span>Slope</span>
+    <span>: ${values.slope}</span>
+  </div>
+
+  <div style="display:flex; justify-content:space-between; padding:3px 0;">
+    <span>Thalassemia</span>
+    <span>: ${values.thal}</span>
+  </div>
+
+  <div style="display:flex; justify-content:space-between; padding:3px 0;">
+    <span>Smoking Status</span>
+    <span>: ${values.smoking.charAt(0).toUpperCase() + values.smoking.slice(1)}</span>
+  </div>
+
+</div>
+
+  </div>
+
+
+  <!-- =========================
+       PAGE 2
+  ========================== -->
+  <div class="print-page">
+
+    <div class="print-section">
+      <h3>Risk Explanation</h3>
+      <p>${document.getElementById('reportRiskExplanation').innerText}</p>
+    </div>
+
+    <div class="print-section">
+      <h3>Clinical Findings</h3>
+      ${buildCleanFindings()}
+    </div>
+
+    <div class="print-section">
+      <h3>Personalized Action Plan</h3>
+
+      <h4>Immediate (0–1 Month)</h4>
+      <ul>${document.getElementById('immediatePlan').innerHTML}</ul>
+
+      <h4>Short-Term (1–6 Months)</h4>
+      <ul>${document.getElementById('shortPlan').innerHTML}</ul>
+
+      <h4>Long-Term Maintenance</h4>
+      <ul>${document.getElementById('longPlan').innerHTML}</ul>
+    </div>
+
+    <div class="print-section">
+      <h3>Recommended Monitoring Schedule</h3>
+      <ul>${document.getElementById('monitoringList').innerHTML}</ul>
+    </div>
+
+    <div style="margin-top:30px; font-size:11px;">
+      This report is generated using an AI-based clinical decision support system.
+      It does not replace professional medical diagnosis.
+    </div>
+
+  </div>
+
+  `;
+
+  setTimeout(() => {
+    window.print();
+    printDiv.style.display = "none";
+  }, 100);
+
+}
+
+</script>
+
+<!-- ===========================
+     PRINT REPORT STRUCTURE
+=========================== -->
+<div id="printReport" style="display: none;"></div>
+
+</body>
+</html>
